@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:uplayer/models/splash_data.dart';
+import 'package:uplayer/views/home/home_main_page.dart';
 
 class SplashScreenController extends GetxController with GetTickerProviderStateMixin {
   late AnimationController animationController;
@@ -44,6 +45,8 @@ class SplashScreenController extends GetxController with GetTickerProviderStateM
       pageController.nextPage(
           duration: const Duration(milliseconds: 1000),
           curve: Curves.easeInOut);
+    }else{
+      Get.to(HomeMainPage());
     }
   }
 
