@@ -5,8 +5,10 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child:Text('Home',style: TextStyle(color: Colors.white),) ,
+    return Container(
+      width: double.maxFinite,
+      height: double.maxFinite,
+      color: Colors.amber.withOpacity(1),
     );
   }
 }

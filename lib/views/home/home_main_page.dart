@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -23,6 +22,7 @@ class HomeMainPage extends StatelessWidget {
     return SuperScaffold(
       topColor: Colors.black,
       botColor: Colors.black,
+      isTopSafe: false,
       backgroundColor: Colors.black,
         child:bodyWidget());
   }
@@ -61,20 +61,54 @@ class HomeMainPage extends StatelessWidget {
   }
 
   Widget navBar(){
-    return Container(
-      width: double.maxFinite,
-      padding:const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          eachNavItem(icon: AppConstant.homeIcon,title: 'Home',navBar:NavBar.home),
-          eachNavItem(icon: AppConstant.playlistIcon,title: 'Playlist',navBar:NavBar.playlist),
-          eachNavItem(icon: AppConstant.downloadIcon,title: 'Download',navBar:NavBar.download),
-          eachNavItem(icon: AppConstant.profileIcon,title: 'Profile',navBar:NavBar.profile),
+   return ClipRRect(
+     child: Stack(
+        children: <Widget>[
+          Positioned.fill(
+            child: Center(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: 20.0,
+                  sigmaY: 20.0,
+                ),
+                child: Container(
+                  color: Colors.black.withOpacity(0.5),
+                ),
+              ),
+            ),
+          ),
+          Container(
+            width: double.maxFinite,
+            padding:const EdgeInsets.symmetric(vertical: 10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                eachNavItem(icon: AppConstant.homeIcon,title: 'Home',navBar:NavBar.home),
+                eachNavItem(icon: AppConstant.playlistIcon,title: 'Playlist',navBar:NavBar.playlist),
+                eachNavItem(icon: AppConstant.downloadIcon,title: 'Download',navBar:NavBar.download),
+                eachNavItem(icon: AppConstant.profileIcon,title: 'Profile',navBar:NavBar.profile),
+
+              ],
+            ),
+          ),
 
         ],
       ),
-    );
+   );
+    // return Container(
+    //   width: double.maxFinite,
+    //   padding:const EdgeInsets.symmetric(vertical: 10),
+    //   child: Row(
+    //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+    //     children: [
+    //       eachNavItem(icon: AppConstant.homeIcon,title: 'Home',navBar:NavBar.home),
+    //       eachNavItem(icon: AppConstant.playlistIcon,title: 'Playlist',navBar:NavBar.playlist),
+    //       eachNavItem(icon: AppConstant.downloadIcon,title: 'Download',navBar:NavBar.download),
+    //       eachNavItem(icon: AppConstant.profileIcon,title: 'Profile',navBar:NavBar.profile),
+    //
+    //     ],
+    //   ),
+    // );
   }
 
   Widget eachNavItem({required String icon,required String title,required NavBar navBar}){
