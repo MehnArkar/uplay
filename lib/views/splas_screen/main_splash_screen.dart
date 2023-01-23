@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:uplayer/controllers/splash_screen_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/views/global_ui/app_icon.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 
 class MainSplashScreen extends StatelessWidget {
@@ -57,14 +58,7 @@ class MainSplashScreen extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height:MediaQuery.of(Get.context!).padding.top ,),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SvgPicture.asset(AppConstant.appIcon,width: 25,height: 25,),
-                const SizedBox(width: 5),
-                const Text('UPlay',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 25),),
-              ],
-            ),
+            const AppIconWidget(),
             const Spacer(),
 
             AnimatedBuilder(
