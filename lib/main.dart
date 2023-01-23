@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uplayer/views/global_ui/animate_background.dart';
+import 'package:uplayer/views/home/home_main_page.dart';
 import 'package:uplayer/views/splas_screen/main_splash_screen.dart';
 
 void main() {
@@ -29,7 +31,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MainSplashScreen();
+    return  HomeMainPage();
   }
 }
 

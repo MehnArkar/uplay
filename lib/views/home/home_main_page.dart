@@ -11,6 +11,8 @@ import 'package:uplayer/views/home/home_page/home_page.dart';
 import 'package:uplayer/views/home/playlist_page/playlist_page.dart';
 import 'package:uplayer/views/home/profile_page/profile_page.dart';
 
+import '../global_ui/animate_background.dart';
+
 class HomeMainPage extends StatelessWidget {
    HomeMainPage({Key? key}) : super(key: key);
 
@@ -31,6 +33,7 @@ class HomeMainPage extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
+        const AnimateBackground(),
         shownPage(),
         Align(
           alignment: Alignment.bottomCenter,
