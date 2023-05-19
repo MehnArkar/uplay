@@ -17,7 +17,7 @@ class AnimateBackground extends StatefulWidget {
 class _AnimateBackgroundState extends State<AnimateBackground> {
   double circleSize =  Get.height*0.15;
   Rx<double>  x=0.0.obs,y=0.0.obs;
-  double xSpeed = 20, ySpeed = 20, speed = 600;
+  double xSpeed = 20, ySpeed = 20, speed = 350;
 
 
   @override

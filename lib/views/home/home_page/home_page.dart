@@ -15,7 +15,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(HomePageController());
     HomePageController c = Get.find();
-    c.searchVideo('Justin Bieber');
+    c.searchVideo('Trending Music');
     return Column(
       children: [
         topPadding(),

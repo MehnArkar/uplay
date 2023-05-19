@@ -12,7 +12,12 @@ class HomePageController extends GetxController{
 
 
   Future<void> searchVideo(String query) async{
-    videoResult = await ytApi.search(query);
+    videoResult = await ytApi.search(query,type: 'video', );
+    update();
+  }
+  
+  Future<void> popularInthisRegion() async{
+    videoResult = await ytApi.getTrends(regionCode: 'MM104');
     update();
   }
 }
