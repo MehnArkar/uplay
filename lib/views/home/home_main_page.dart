@@ -22,10 +22,9 @@ class HomeMainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(HomeController());
     return SuperScaffold(
-      topColor: Colors.black,
-      botColor: Colors.black,
-      isTopSafe: false,
-      backgroundColor: Colors.black,
+        isTopSafe: false,
+        botColor: Colors.black,
+        backgroundColor: Colors.black,
         child:bodyWidget());
   }
 

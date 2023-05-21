@@ -13,13 +13,13 @@ class MainSplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Get.put(SplashScreenController());
-    return
-      SuperScaffold(
+    return SuperScaffold(
           isTopSafe: false,
-          isBotSafe: false,
+          isBotSafe: true,
           botColor: Colors.black,
           backgroundColor: Colors.black,
-          child: bodyWidget());
+          child: bodyWidget()
+    );
   }
 
   Widget bodyWidget(){

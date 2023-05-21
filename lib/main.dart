@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uplayer/views/global_ui/animate_background.dart';
-import 'package:uplayer/views/home/home_main_page.dart';
+import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/splas_screen/main_splash_screen.dart';
 
-void main() {
+import 'controllers/global_controller.dart';
+
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Future.delayed(const Duration(milliseconds: 1000));
+  Get.put(GlobalController());
   runApp(const MyApp());
 }
 
@@ -17,8 +21,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Uplay',
+      navigatorObservers: <NavigatorObserver>[routeObserver],
       theme: ThemeData(
-        fontFamily: 'Poppins',
+        fontFamily: 'SFPro',
         primarySwatch: Colors.blue,
       ),
       home:const MainPage(),
@@ -31,7 +36,7 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return  MainSplashScreen();
+    return const MainSplashScreen();
   }
 }
 
