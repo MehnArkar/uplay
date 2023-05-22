@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:uplayer/controllers/home_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
@@ -85,10 +86,10 @@ class HomeMainPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                eachNavItem(icon: AppConstant.homeIcon,title: 'Home',navBar:NavBar.home),
-                eachNavItem(icon: AppConstant.playlistIcon,title: 'Playlist',navBar:NavBar.playlist),
-                eachNavItem(icon: AppConstant.downloadIcon,title: 'Download',navBar:NavBar.download),
-                eachNavItem(icon: AppConstant.profileIcon,title: 'Profile',navBar:NavBar.profile),
+                eachNavItem(icon: Iconsax.home,title: 'Home',navBar:NavBar.home),
+                eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
+                eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
+                eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
 
               ],
             ),
@@ -113,7 +114,7 @@ class HomeMainPage extends StatelessWidget {
     // );
   }
 
-  Widget eachNavItem({required String icon,required String title,required NavBar navBar}){
+  Widget eachNavItem({required IconData icon,required String title,required NavBar navBar}){
     return GetBuilder<HomeController>(
       builder:(controller)=> GestureDetector(
         onTap:() {controller.onClickNavBar(navBar);},
@@ -141,11 +142,12 @@ class HomeMainPage extends StatelessWidget {
 
                     ),
                   ),
-                  SvgPicture.asset(icon,width: Get.height*0.03,height:  Get.height*0.03,color: controller.currentNavBar==navBar?AppColors.primaryColor:Colors.white,),
+                  Icon(icon,color: controller.currentNavBar==navBar?AppColors.primaryColor:Colors.white,)
+                  // SvgPicture.asset(icon,width: Get.height*0.03,height:  Get.height*0.03,color: controller.currentNavBar==navBar?AppColors.primaryColor:Colors.white,),
                 ],
               ),
               const SizedBox(height: 3,),
-              Text(title,style: TextStyle(color:controller.currentNavBar==navBar?AppColors.primaryColor: Colors.white,fontSize: 10),)
+              Text(title,style: TextStyle(color:controller.currentNavBar==navBar?AppColors.primaryColor: Colors.white,fontSize: 12,),)
 
             ],
           ),
