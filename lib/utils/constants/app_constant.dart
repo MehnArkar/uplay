@@ -1,4 +1,8 @@
-class AppConstant {
+import 'dart:ui';
+import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+
+class AppConstants {
   //Key
   static const String youTubeApiKey = 'AIzaSyB_0-Q0_Scv_Zx1zZFA98X7iTfWStNywL0';
 
@@ -11,4 +15,15 @@ class AppConstant {
   static const String ellipseIcon = 'assets/icons/ellipse.svg';
 
   static  double textScaleFactor = 1.0;
+
+  static  TextStyle textStyleSmall = Theme.of(Get.context!).textTheme.bodySmall!;
+  static  TextStyle textStyleMedium = Theme.of(Get.context!).textTheme.bodyMedium!;
+  static  TextStyle textStyleLarge = Theme.of(Get.context!).textTheme.bodyLarge!;
+
+
+  static  TextStyle textStyleTitleSmall = Theme.of(Get.context!).textTheme.titleSmall!;
+  static  TextStyle textStyleTitleMedium = Theme.of(Get.context!).textTheme.titleMedium!;
+
+
+
 }

@@ -29,6 +29,6 @@ class GlobalController extends GetxController{
     double w = Get.width;
     double h = Get.height;
     double d = sqrt((w * w) + (h * h));
-    AppConstant.textScaleFactor = d / sd;
+    AppConstants.textScaleFactor = d / sd;
   }
 }

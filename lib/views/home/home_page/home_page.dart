@@ -62,6 +62,7 @@ class HomePage extends StatelessWidget {
                         print(audioUrl);
 
                         await controller.player.setUrl(audioUrl.toString());
+                        await controller.player.setAsset(audioUrl.toString());
                         controller.player.play();
                       }else{
                         controller.player.stop();

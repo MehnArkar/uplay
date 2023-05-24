@@ -12,7 +12,7 @@ class AppIconWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        SvgPicture.asset(AppConstant.appIcon,width: 25,height: 25,),
+        SvgPicture.asset(AppConstants.appIcon,width: 25,height: 25,),
         const SizedBox(width: 5),
         const Text('UPlay',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 25),),
       ],

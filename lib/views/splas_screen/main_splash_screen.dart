@@ -15,7 +15,7 @@ class MainSplashScreen extends StatelessWidget {
     Get.put(SplashScreenController());
     return SuperScaffold(
           isTopSafe: false,
-          isBotSafe: true,
+          isBotSafe: false,
           botColor: Colors.black,
           backgroundColor: Colors.black,
           child: bodyWidget()

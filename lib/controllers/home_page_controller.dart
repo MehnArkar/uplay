@@ -6,7 +6,7 @@ import '../utils/constants/app_constant.dart';
 
 class HomePageController extends GetxController{
   static String key = 'YOUR_API_KEY';
-  YoutubeAPI ytApi = YoutubeAPI(AppConstant.youTubeApiKey);
+  YoutubeAPI ytApi = YoutubeAPI(AppConstants.youTubeApiKey);
   List<YouTubeVideo> videoResult = [];
   AudioPlayer player = AudioPlayer();
 

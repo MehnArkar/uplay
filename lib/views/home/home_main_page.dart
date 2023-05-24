@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -24,6 +25,7 @@ class HomeMainPage extends StatelessWidget {
     Get.put(HomeController());
     return SuperScaffold(
         isTopSafe: false,
+        isBotSafe: false,
         botColor: Colors.black,
         backgroundColor: Colors.black,
         child:bodyWidget());
@@ -80,19 +82,26 @@ class HomeMainPage extends StatelessWidget {
               ),
             ),
           ),
-          Container(
-            width: double.maxFinite,
-            padding:const EdgeInsets.symmetric(vertical: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                eachNavItem(icon: Iconsax.home,title: 'Home',navBar:NavBar.home),
-                eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
-                eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
-                eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: double.maxFinite,
+                padding:const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    eachNavItem(icon: Iconsax.home,title: 'Home',navBar:NavBar.home),
+                    eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
+                    eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
+                    eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
 
-              ],
-            ),
+                  ],
+                ),
+              ),
+              if(Platform.isIOS)
+              const SizedBox(height:15)
+            ],
           ),
 
         ],
@@ -147,7 +156,7 @@ class HomeMainPage extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 3,),
-              Text(title,style: TextStyle(color:controller.currentNavBar==navBar?AppColors.primaryColor: Colors.white,fontSize: 12,),)
+              Text(title,style: AppConstants.textStyleSmall.copyWith(color: controller.currentNavBar==navBar?AppColors.primaryColor:Colors.white),)
 
             ],
           ),
