@@ -8,10 +8,10 @@ import 'package:uplayer/controllers/home_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
-import 'package:uplayer/views/home/download_page/download_page.dart';
-import 'package:uplayer/views/home/home_page/home_page.dart';
-import 'package:uplayer/views/home/playlist_page/playlist_page.dart';
-import 'package:uplayer/views/home/profile_page/profile_page.dart';
+import 'package:uplayer/views/home/search_page.dart';
+import 'package:uplayer/views/home/home_page.dart';
+import 'package:uplayer/views/home/playlist_page.dart';
+import 'package:uplayer/views/home/profile_page.dart';
 
 import '../global_ui/animate_background.dart';
 
@@ -28,6 +28,7 @@ class HomeMainPage extends StatelessWidget {
         isBotSafe: false,
         botColor: Colors.black,
         backgroundColor: Colors.black,
+        isResizeToAvoidBottomInset: false,
         child:bodyWidget());
   }
 
@@ -95,7 +96,6 @@ class HomeMainPage extends StatelessWidget {
                     eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
                     eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
                     eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
-
                   ],
                 ),
               ),

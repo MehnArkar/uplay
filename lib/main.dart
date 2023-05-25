@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
 
           titleSmall: TextStyle(fontSize: 18,fontWeight: FontWeight.w600,color: Colors.white),
           titleMedium: TextStyle(fontSize: 20,fontWeight: FontWeight.w600,color: Colors.white),
+          titleLarge: TextStyle(fontSize: 30,fontWeight: FontWeight.w600,color: Colors.white),
         )
       ),
       home:const MainPage(),

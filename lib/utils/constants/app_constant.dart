@@ -23,6 +23,7 @@ class AppConstants {
 
   static  TextStyle textStyleTitleSmall = Theme.of(Get.context!).textTheme.titleSmall!;
   static  TextStyle textStyleTitleMedium = Theme.of(Get.context!).textTheme.titleMedium!;
+  static  TextStyle textStyleTitleLarge = Theme.of(Get.context!).textTheme.titleLarge!;
 
 
 

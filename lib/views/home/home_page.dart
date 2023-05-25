@@ -7,7 +7,7 @@ import 'package:uplayer/views/global_ui/animate_background.dart';
 import 'package:uplayer/views/global_ui/app_icon.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart' ;
-import '../../global_ui/global_widgets.dart';
+import '../global_ui/global_widgets.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,18 +27,7 @@ class HomePage extends StatelessWidget {
   }
 
   Widget topPanel(){
-    return Container(
-      padding:const EdgeInsets.symmetric(horizontal: 20,vertical: 10),
-      child: Row(
-        children: [
-          SvgPicture.asset('assets/icons/search_icon.svg',width: 25,height: 25,),
-          const Spacer(),
-          const AppIconWidget(),
-          const Spacer(),
-          SvgPicture.asset('assets/icons/setting.svg',width: 25,height: 25,),
-        ],
-      ),
-    );
+    return const Center(child: AppIconWidget(),);
   }
 
   Widget imageBannerPanel(){
@@ -76,7 +65,7 @@ class HomePage extends StatelessWidget {
                         children: [
                           Text(currentVideo.title,style: TextStyle(color: Colors.white),),
                           Image.network(currentVideo.thumbnail.medium.url!,width: Get.width*0.15,),
-                          Text(currentVideo.url??'',style: TextStyle(color: Colors.white),),
+                          Text(currentVideo.duration??'',style: TextStyle(color: Colors.white),),
                           Divider(color: Colors.white,)
                         ],
                       ),
