@@ -44,14 +44,14 @@ class HomePage extends StatelessWidget {
                         final youtube = YoutubeExplode();
                         final manifest = await youtube.videos.streamsClient
                             .getManifest(controller.videoResult[index].id);
-                        final audioStreamInfo = manifest.audioOnly
+                        final audioStreamInfo = manifest.muxed
                             .withHighestBitrate();
                         final audioUrl = audioStreamInfo.url;
 
                         print(audioUrl);
 
                         await controller.player.setUrl(audioUrl.toString());
-                        await controller.player.setAsset(audioUrl.toString());
+                        // await controller.player.setAsset(audioUrl.toString());
                         controller.player.play();
                       }else{
                         controller.player.stop();

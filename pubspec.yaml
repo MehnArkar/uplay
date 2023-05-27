@@ -43,6 +43,7 @@ dependencies:
   youtube_explode_dart: ^1.12.4
   just_audio: ^0.9.33
   iconsax: ^0.0.8
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
