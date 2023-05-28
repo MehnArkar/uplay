@@ -16,7 +16,6 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     Get.put(HomePageController());
     HomePageController c = Get.find();
-    c.searchVideo('Zig get well soon');
     return Column(
       children: [
         topPadding(),
@@ -31,51 +30,6 @@ class HomePage extends StatelessWidget {
   }
 
   Widget imageBannerPanel(){
-    return GetBuilder<HomePageController>(
-        builder:(controller)=> controller.videoResult.isNotEmpty?
-            SizedBox(
-              child: ListView.builder(
-                itemCount: controller.videoResult.length,
-                itemBuilder: (BuildContext context, int index) {
-                  YouTubeVideo currentVideo = controller.videoResult[index];
-                  return GestureDetector(
-                    onTap: () async{
-                      if(!controller.player.playing) {
-                        final youtube = YoutubeExplode();
-                        final manifest = await youtube.videos.streamsClient
-                            .getManifest(controller.videoResult[index].id);
-                        final audioStreamInfo = manifest.muxed
-                            .withHighestBitrate();
-                        final audioUrl = audioStreamInfo.url;
-
-                        print(audioUrl);
-
-                        await controller.player.setUrl(audioUrl.toString());
-                        // await controller.player.setAsset(audioUrl.toString());
-                        controller.player.play();
-                      }else{
-                        controller.player.stop();
-                      }
-
-
-                    },
-                    child: Container(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(currentVideo.title,style: TextStyle(color: Colors.white),),
-                          Image.network(currentVideo.thumbnail.medium.url!,width: Get.width*0.15,),
-                          Text(currentVideo.duration??'',style: TextStyle(color: Colors.white),),
-                          Divider(color: Colors.white,)
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            )
-            :
-        Container()
-    );
+    return Container();
   }
 }

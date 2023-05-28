@@ -83,27 +83,21 @@ class HomeMainPage extends StatelessWidget {
               ),
             ),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: double.maxFinite,
-                padding:const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    eachNavItem(icon: Iconsax.home,title: 'Home',navBar:NavBar.home),
-                    eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
-                    eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
-                    eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
-                  ],
-                ),
-              ),
-              if(Platform.isIOS)
-              const SizedBox(height:15)
-            ],
+          Container(
+            width: double.maxFinite,
+            height:AppConstants.navBarHeight,
+            alignment: Alignment.center,
+            padding: EdgeInsets.only(bottom: Platform.isIOS?15:0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                eachNavItem(icon: Iconsax.home,title: 'Home',navBar:NavBar.home),
+                eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
+                eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
+                eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
+              ],
+            ),
           ),
-
         ],
       ),
    );

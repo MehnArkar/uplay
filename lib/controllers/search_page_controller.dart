@@ -12,10 +12,13 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
   double cancelBtnWidth = 0.0;
   FocusNode nodeTxtSearch = FocusNode();
   late AnimationController animation;
+  ScrollController scrollController = ScrollController();
+  bool isPined = false;
 
   YoutubeAPI ytApi = YoutubeAPI(AppConstants.youTubeApiKey);
   List<YouTubeVideo> videoResult = [];
   bool isSearching = false;
+  bool isLoadMore = false;
 
 
 
@@ -32,6 +35,20 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
         animation.reverse();
       }
     });
+
+    scrollController.addListener(() async {
+      if(scrollController.position.pixels>=60){
+        isPined=true;
+        update();
+      }else{
+        isPined=false;
+        update();
+      }
+
+      if(scrollController.position.pixels==scrollController.position.maxScrollExtent){
+        await loadMore();
+      }
+    });
   }
   search(String query) async{
     isSearching = true;
@@ -42,6 +59,18 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
     isSearching=false;
     update();
   }
+
+  loadMore() async{
+    isLoadMore = true;
+    update();
+
+    videoResult += await ytApi.nextPage();
+
+    isLoadMore=false;
+    update();
+  }
+
+
 
 
 }

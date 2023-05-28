@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,9 @@ class AppConstants {
   static  TextStyle textStyleTitleSmall = Theme.of(Get.context!).textTheme.titleSmall!;
   static  TextStyle textStyleTitleMedium = Theme.of(Get.context!).textTheme.titleMedium!;
   static  TextStyle textStyleTitleLarge = Theme.of(Get.context!).textTheme.titleLarge!;
+
+  //Size
+  static double navBarHeight = Platform.isIOS?Get.height*0.08+15 :Get.height*0.08;
 
 
 

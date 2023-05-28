@@ -1,5 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
@@ -22,19 +25,24 @@ class DownloadPage extends StatelessWidget {
     });
     return SafeArea(
       child: CustomScrollView(
+        controller: Get.find<SearchPageController>().scrollController,
         slivers: [
           SliverPersistentHeader(delegate: SearchTitleHeader()),
           // SliverPersistentHeader(pinned: true, delegate: SearchBarHeader())
-          SliverAppBar(
-            foregroundColor: Colors.transparent,
-            backgroundColor: Colors.transparent,
-            leading: Container(),
-            elevation: 0,
-            flexibleSpace: Container(
-                padding:const EdgeInsets.symmetric(horizontal: 25),
-                child:searchBarWidget()),
-            pinned: true,
+          GetBuilder<SearchPageController>(
+            builder:(controller)=> SliverAppBar(
+              foregroundColor: Colors.transparent,
+              backgroundColor:Colors.transparent,
+              leading: Container(),
+              elevation: 0,
+              flexibleSpace: AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  padding:const EdgeInsets.symmetric(horizontal: 25),
+                  color:  Colors.transparent,
+                  child:searchBarWidget()),
+              pinned: true,
 
+            ),
           ),
           GetBuilder<SearchPageController>(
               builder:(controller)=>
@@ -45,9 +53,11 @@ class DownloadPage extends StatelessWidget {
                       SliverList(
                           delegate: SliverChildBuilderDelegate(
                               (context, index) => eachResultList(controller.videoResult[index]),
-                              childCount:controller.videoResult.length)
+                              childCount:controller.videoResult.length,)
                       )
-          )
+          ),
+          GetBuilder<SearchPageController>(
+              builder:(controller)=> SliverPadding(padding: EdgeInsets.only(bottom:controller.isSearching?0 :AppConstants.navBarHeight)))
         ],
       ),
     );
@@ -98,33 +108,72 @@ class DownloadPage extends StatelessWidget {
   }
 
   Widget eachResultList(YouTubeVideo video){
-    return Container(
-      padding:const EdgeInsets.symmetric(horizontal: 25),
-      child: Row(
-        children: [
-          Container(
-            width: Get.width*0.15,
-            height: Get.width*0.15,
-            margin:const EdgeInsets.only(bottom: 15),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnail.high.url??''),fit: BoxFit.cover)
-            ),
+    return GetBuilder<PlayerController>(
+      builder:(playerController)=> GestureDetector(
+        onTap: (){
+          playerController.play(video);
+        },
+        child: Container(
+          padding:const EdgeInsets.symmetric(horizontal: 25),
+          margin:const EdgeInsets.only(bottom: 15),
+          color: Colors.transparent,
+          child: Row(
+            children: [
+              Container(
+                width: Get.width*0.15,
+                height: Get.width*0.15,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnail.high.url??''),fit: BoxFit.cover)
+                ),
+                child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id?
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(14),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Positioned.fill(
+                                child: Center(
+                                  child: BackdropFilter(
+                                    filter: ImageFilter.blur(
+                                      sigmaX: 1.0,
+                                      sigmaY: 1.0,
+                                    ),
+                                    child: Container(
+                                      color: Colors.black.withOpacity(0.25),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if(playerController.isLoading)
+                                const CupertinoActivityIndicator(color: AppColors.primaryColor,)
+                            ],
+                          ),
+                        )
+                       :
+                      Container()
+              ),
+              const SizedBox(width: 15,),
+              Expanded(
+                  child: SizedBox(
+                    height: Get.width*0.15,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          video.title,
+                          style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id?AppColors.primaryColor:Colors.white),
+                          maxLines: 1,overflow: TextOverflow.ellipsis,),
+                        Text(video.duration??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
+
+              ],),
+                  )),
+              const SizedBox(width: 15,),
+              const Icon(Iconsax.arrow_down_2,color: Colors.grey,)
+            ],
           ),
-          const SizedBox(width: 15,),
-          Expanded(
-              child: SizedBox(
-                height: Get.width*0.1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(video.title,style: AppConstants.textStyleMedium,maxLines: 1,overflow: TextOverflow.ellipsis,),
-                    Text(video.duration??'',style: AppConstants.textStyleSmall,)
-            
-          ],),
-              ))
-        ],
+        ),
       ),
     );
   }
