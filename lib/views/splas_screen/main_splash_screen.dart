@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
@@ -15,7 +17,7 @@ class MainSplashScreen extends StatelessWidget {
     Get.put(SplashScreenController());
     return SuperScaffold(
           isTopSafe: false,
-          isBotSafe: false,
+          isBotSafe:Platform.isAndroid?true:false,
           botColor: Colors.black,
           backgroundColor: Colors.black,
           child: bodyWidget()

@@ -58,7 +58,6 @@ class _SuperScaffoldState extends State<SuperScaffold> with RouteAware {
 
   @override
   Widget build(BuildContext context) {
-    setStatusAndNavigationBarColor();
     return GestureDetector(
       onTap: (){
         FocusManager.instance.primaryFocus!.unfocus();

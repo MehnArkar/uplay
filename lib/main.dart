@@ -7,7 +7,7 @@ import 'controllers/global_controller.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
-  // await Future.delayed(const Duration(milliseconds: 1000));
+  await Future.delayed(const Duration(milliseconds: 1000));
   Get.put(GlobalController());
   runApp(const MyApp());
 }
@@ -48,6 +48,7 @@ class MainPage extends StatelessWidget {
     return const MainSplashScreen();
   }
 }
+
 
 
 

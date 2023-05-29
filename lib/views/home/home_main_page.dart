@@ -12,7 +12,6 @@ import 'package:uplayer/views/home/search_page.dart';
 import 'package:uplayer/views/home/home_page.dart';
 import 'package:uplayer/views/home/playlist_page.dart';
 import 'package:uplayer/views/home/profile_page.dart';
-
 import '../global_ui/animate_background.dart';
 
 class HomeMainPage extends StatelessWidget {
@@ -25,7 +24,7 @@ class HomeMainPage extends StatelessWidget {
     Get.put(HomeController());
     return SuperScaffold(
         isTopSafe: false,
-        isBotSafe: false,
+        isBotSafe:Platform.isAndroid?true:false,
         botColor: Colors.black,
         backgroundColor: Colors.black,
         isResizeToAvoidBottomInset: false,
@@ -101,20 +100,6 @@ class HomeMainPage extends StatelessWidget {
         ],
       ),
    );
-    // return Container(
-    //   width: double.maxFinite,
-    //   padding:const EdgeInsets.symmetric(vertical: 10),
-    //   child: Row(
-    //     mainAxisAlignment: MainAxisAlignment.spaceAround,
-    //     children: [
-    //       eachNavItem(icon: AppConstant.homeIcon,title: 'Home',navBar:NavBar.home),
-    //       eachNavItem(icon: AppConstant.playlistIcon,title: 'Playlist',navBar:NavBar.playlist),
-    //       eachNavItem(icon: AppConstant.downloadIcon,title: 'Download',navBar:NavBar.download),
-    //       eachNavItem(icon: AppConstant.profileIcon,title: 'Profile',navBar:NavBar.profile),
-    //
-    //     ],
-    //   ),
-    // );
   }
 
   Widget eachNavItem({required IconData icon,required String title,required NavBar navBar}){

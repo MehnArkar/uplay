@@ -27,7 +27,7 @@ class AppConstants {
   static  TextStyle textStyleTitleLarge = Theme.of(Get.context!).textTheme.titleLarge!;
 
   //Size
-  static double navBarHeight = Platform.isIOS?Get.height*0.08+15 :Get.height*0.08;
+  static double navBarHeight = Platform.isIOS?Get.height*0.08+(MediaQuery.of(Get.context!).padding.bottom) :Get.height*0.08;
 
 
 
