@@ -44,5 +44,20 @@ class PlayerController extends GetxController{
   }
 
 
+  togglePlayPause(){
+    if(player.playing){
+      player.pause();
+    }else{
+      player.play();
+    }
+  }
+
+  seek(bool isPrevious){
+    if(isPrevious){
+      player.seekToPrevious();
+    }else{
+      player.seekToNext();
+    }
+  }
 
 }

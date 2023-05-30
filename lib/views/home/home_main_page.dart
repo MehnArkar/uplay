@@ -13,6 +13,7 @@ import 'package:uplayer/views/home/home_page.dart';
 import 'package:uplayer/views/home/playlist_page.dart';
 import 'package:uplayer/views/home/profile_page.dart';
 import '../global_ui/animate_background.dart';
+import '../global_ui/mini_player_controll.dart';
 
 class HomeMainPage extends StatelessWidget {
    HomeMainPage({Key? key}) : super(key: key);
@@ -39,7 +40,12 @@ class HomeMainPage extends StatelessWidget {
         shownPage(),
         Align(
           alignment: Alignment.bottomCenter,
-            child: navBar())
+            child: navBar()),
+        Positioned(
+            left: 15,
+            right: 15,
+            bottom: AppConstants.navBarHeight,
+            child: const MiniPlayerControll())
       ],
     );
   }

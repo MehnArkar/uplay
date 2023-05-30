@@ -183,6 +183,8 @@ class SearchBarHeader extends SliverPersistentHeaderDelegate{
             animation: controller.animation,
             builder: (context,child){
               return AnimatedContainer(
+                width: double.maxFinite,
+                height: 66,
                 duration:const Duration(milliseconds: 200),
                 padding:const EdgeInsets.only(left: 25,right: 25,bottom: 15,top: 15),
                 color: controller.isPined?Colors.black:Colors.transparent,
