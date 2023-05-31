@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:just_audio_background/just_audio_background.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
@@ -9,10 +10,6 @@ class PlayerController extends GetxController{
   void onInit() {
     super.onInit();
     player.playerStateStream.listen((stage) {
-      if(player.playerState.processingState==ProcessingState.completed){
-        currentVideo=null;
-        update();
-      }
     });
   }
 
@@ -24,13 +21,13 @@ class PlayerController extends GetxController{
 
 
   play(YouTubeVideo video) async {
+    currentVideo = video;
     //Stop player if playing another
     if(player.playing){
       player.stop();
     }
-
     //Update data
-    currentVideo = video;
+
     isLoading = true;
     update();
 
@@ -39,8 +36,19 @@ class PlayerController extends GetxController{
     final audioStreamInfo = manifest.muxed.withHighestBitrate();
     final audioUrl = audioStreamInfo.url;
     print(audioUrl);
-    await player.setUrl(audioUrl.toString());
 
+    AudioSource source = AudioSource.uri(
+      Uri.parse(audioUrl.toString()),
+      tag: MediaItem(
+        // Specify a unique ID for each media item:
+        id: video.id??'0',
+        // Metadata to display in the notification:
+        album: '',
+        title: video.title,
+        artUri: Uri.parse(video.thumbnail.high.url??''),
+      ),
+    );
+    await player.setAudioSource(source);
     //Loading finish
     isLoading= false;
     update();

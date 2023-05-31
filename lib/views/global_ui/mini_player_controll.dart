@@ -38,7 +38,7 @@ class MiniPlayerControll extends StatelessWidget {
                 ),
                 Container(
                   width: double.maxFinite,
-                  padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
+                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
                   child: Row(
                     children: [
                        audioImage(controller) ,
@@ -63,7 +63,7 @@ class MiniPlayerControll extends StatelessWidget {
       height: Get.width*0.13,
       decoration: BoxDecoration(
           shape: BoxShape.circle,
-          image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo!.thumbnail.high.url!),fit: BoxFit.cover)
+          image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo==null?'':controller.currentVideo!.thumbnail.high.url!),fit: BoxFit.cover)
       ),
     );
   }

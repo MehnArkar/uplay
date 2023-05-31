@@ -2,13 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/splas_screen/main_splash_screen.dart';
-
+import 'package:just_audio_background/just_audio_background.dart';
 import 'controllers/global_controller.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Future.delayed(const Duration(milliseconds: 1000));
   Get.put(GlobalController());
+  await JustAudioBackground.init(
+    androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
+    androidNotificationChannelName: 'Audio playback',
+    androidNotificationOngoing: true,
+  );
   runApp(const MyApp());
 }
 
