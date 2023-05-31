@@ -1,11 +1,12 @@
 import 'dart:ui';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:uplayer/utils/constants/app_color.dart';
 
 import '../../utils/constants/app_constant.dart';
 
@@ -49,6 +50,11 @@ class MiniPlayerControll extends StatelessWidget {
                     ],
                   ),
                 ),
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: audioProgress(controller))
               ],
             ),
           ):Container();
@@ -101,20 +107,42 @@ class MiniPlayerControll extends StatelessWidget {
             onTap: (){
               controller.seek(true);
             },
-            child:const Icon(Iconsax.previous,color: Colors.white,)),
+            child:const Icon(Iconsax.previous5,color: Colors.white,)),
         const SizedBox(width: 10,),
         GestureDetector(
             onTap: (){
               controller.togglePlayPause();
             },
-            child: Icon(controller.player.playerState.playing? Iconsax.pause:Iconsax.play,color: Colors.white,)),
+            child: Icon(controller.player.playerState.playing? Iconsax.pause5: Iconsax.play5 ,color: Colors.white,)),
         const SizedBox(width: 10,),
         GestureDetector(
             onTap: (){
               controller.seek(false);
             },
-            child:const Icon(Iconsax.next,color: Colors.white,))
+            child:const Icon(Iconsax.next5,color: Colors.white,))
       ],
+    );
+  }
+
+  Widget audioProgress(PlayerController controller) {
+    return StreamBuilder<Duration>(
+      stream: controller.player.positionStream,
+      builder: (context,snackshot) {
+        double progress = 0;
+        Duration currentDuration = snackshot.data??const Duration(seconds: 0);
+        Duration totalDuration =  controller.player.duration??const Duration();
+        if(totalDuration.inMilliseconds>0){
+          progress = currentDuration.inMilliseconds/totalDuration.inMilliseconds;
+        }
+        return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: LinearProgressIndicator(
+            color: AppColors.primaryColor,
+            backgroundColor: Colors.grey,
+            value: progress,
+        ),
+          );
+      }
     );
   }
 }
