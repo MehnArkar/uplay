@@ -8,6 +8,12 @@ class PlayerController extends GetxController{
   @override
   void onInit() {
     super.onInit();
+    player.playerStateStream.listen((stage) {
+      if(player.playerState.processingState==ProcessingState.completed){
+        currentVideo=null;
+        update();
+      }
+    });
   }
 
 
@@ -52,11 +58,12 @@ class PlayerController extends GetxController{
     }
   }
 
-  seek(bool isPrevious){
+  seek(bool isPrevious) {
+    Duration currentDuration =  player.position;
     if(isPrevious){
-      player.seekToPrevious();
+      player.seek(currentDuration-const Duration(seconds: 10));
     }else{
-      player.seekToNext();
+      player.seek(currentDuration+const Duration(seconds: 10));
     }
   }
 

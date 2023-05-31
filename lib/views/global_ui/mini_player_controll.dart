@@ -19,8 +19,7 @@ class MiniPlayerControll extends StatelessWidget {
         stream: controller.player.playerStateStream,
         builder:(context,snapshot){
           PlayerState playerState = snapshot.data!;
-          ProcessingState processingState = playerState.processingState;
-          return playerState.playing || playerState.processingState!=ProcessingState.completed? ClipRRect(
+          return playerState.processingState==ProcessingState.ready || playerState.processingState==ProcessingState.buffering? ClipRRect(
             borderRadius: BorderRadius.circular(200),
             child: Stack(
               children: [
@@ -42,44 +41,11 @@ class MiniPlayerControll extends StatelessWidget {
                   padding:const EdgeInsets.symmetric(horizontal: 15,vertical: 5),
                   child: Row(
                     children: [
-                        Container(
-                          width: Get.width*0.13,
-                          height: Get.width*0.13,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                            image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo!.thumbnail.high.url??''),fit: BoxFit.cover)
-                          ),
-                        ),
+                       audioImage(controller) ,
                       const SizedBox(width: 15,),
-                      Expanded(child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            controller.currentVideo!.title,
-                            style: AppConstants.textStyleMedium,
-                            maxLines: 1,overflow: TextOverflow.ellipsis,),
-                          const SizedBox(height: 10,),
-                          Text(controller.player.duration!.inMinutes.toString()??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
-                        ],
-                      )),
-                      GestureDetector(
-                          onTap: (){
-                            controller.seek(true);
-                          },
-                          child:const Icon(Iconsax.previous,color: Colors.white,)),
-                      const SizedBox(width: 10,),
-                      GestureDetector(
-                          onTap: (){
-                            controller.togglePlayPause();
-                          },
-                          child: Icon(playerState.playing? Iconsax.pause:Iconsax.play,color: Colors.white,)),
-                      const SizedBox(width: 10,),
-                      GestureDetector(
-                          onTap: (){
-                            controller.seek(false);
-                          },
-                          child:const Icon(Iconsax.next,color: Colors.white,))
+                      Expanded(child: audioDetails(controller)),
+                      const SizedBox(width: 15,),
+                      audioController(controller)
                     ],
                   ),
                 ),
@@ -88,6 +54,67 @@ class MiniPlayerControll extends StatelessWidget {
           ):Container();
         }
       ),
+    );
+  }
+
+  Widget audioImage(PlayerController controller){
+    return Container(
+      width: Get.width*0.13,
+      height: Get.width*0.13,
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo!.thumbnail.high.url!),fit: BoxFit.cover)
+      ),
+    );
+  }
+
+  Widget audioDetails(PlayerController controller){
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          controller.currentVideo!.title,
+          style: AppConstants.textStyleMedium,
+          maxLines: 1,overflow: TextOverflow.ellipsis,),
+        const SizedBox(height: 10,),
+        StreamBuilder<Duration?>(
+          stream: controller.player.positionStream,
+          builder: (context,snapshot) {
+            Duration? duration = snapshot.data;
+            String minutes =duration!=null?(duration.inSeconds / 60).floor().toString().padLeft(2, '0'):'00';
+            String seconds = duration!=null?(duration.inSeconds % 60).toString().padLeft(2, '0'):'00';
+            return Text(
+            '$minutes : $seconds',
+            style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),);
+          }
+        )
+      ],
+    );
+  }
+
+  Widget audioController(PlayerController controller,){
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        GestureDetector(
+            onTap: (){
+              controller.seek(true);
+            },
+            child:const Icon(Iconsax.previous,color: Colors.white,)),
+        const SizedBox(width: 10,),
+        GestureDetector(
+            onTap: (){
+              controller.togglePlayPause();
+            },
+            child: Icon(controller.player.playerState.playing? Iconsax.pause:Iconsax.play,color: Colors.white,)),
+        const SizedBox(width: 10,),
+        GestureDetector(
+            onTap: (){
+              controller.seek(false);
+            },
+            child:const Icon(Iconsax.next,color: Colors.white,))
+      ],
     );
   }
 }
