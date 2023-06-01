@@ -1,5 +1,4 @@
 import 'dart:ui';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -7,6 +6,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
+import 'package:uplayer/views/player/player_controller_page.dart';
 
 import '../../utils/constants/app_constant.dart';
 
@@ -22,40 +22,45 @@ class MiniPlayerControll extends StatelessWidget {
           PlayerState playerState = snapshot.data!;
           return playerState.processingState==ProcessingState.ready || playerState.processingState==ProcessingState.buffering? ClipRRect(
             borderRadius: BorderRadius.circular(200),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: Center(
-                    child: BackdropFilter(
-                      filter: ImageFilter.blur(
-                        sigmaX: 10.0,
-                        sigmaY: 10.0,
-                      ),
-                      child: Container(
-                        color: Colors.grey.withOpacity(0.5),
+            child: GestureDetector(
+              onTap: (){
+                Get.to(const PlayerControllerPage(),transition: Transition.downToUp);
+              },
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Center(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 10.0,
+                          sigmaY: 10.0,
+                        ),
+                        child: Container(
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Container(
-                  width: double.maxFinite,
-                  padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
-                  child: Row(
-                    children: [
-                       audioImage(controller) ,
-                      const SizedBox(width: 15,),
-                      Expanded(child: audioDetails(controller)),
-                      const SizedBox(width: 15,),
-                      audioController(controller)
-                    ],
+                  Container(
+                    width: double.maxFinite,
+                    padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
+                    child: Row(
+                      children: [
+                         audioImage(controller) ,
+                        const SizedBox(width: 15,),
+                        Expanded(child: audioDetails(controller)),
+                        const SizedBox(width: 15,),
+                        audioController(controller)
+                      ],
+                    ),
                   ),
-                ),
-                Positioned(
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  child: audioProgress(controller))
-              ],
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: audioProgress(controller))
+                ],
+              ),
             ),
           ):Container();
         }

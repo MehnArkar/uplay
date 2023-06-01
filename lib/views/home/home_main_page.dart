@@ -13,7 +13,7 @@ import 'package:uplayer/views/home/home_page.dart';
 import 'package:uplayer/views/home/playlist_page.dart';
 import 'package:uplayer/views/home/profile_page.dart';
 import '../global_ui/animate_background.dart';
-import '../global_ui/mini_player_controll.dart';
+import '../player/mini_player_controll.dart';
 
 class HomeMainPage extends StatelessWidget {
    HomeMainPage({Key? key}) : super(key: key);

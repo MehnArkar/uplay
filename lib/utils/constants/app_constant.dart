@@ -28,6 +28,8 @@ class AppConstants {
 
   //Size
   static double navBarHeight = Platform.isIOS?Get.height*0.08+(MediaQuery.of(Get.context!).padding.bottom) :Get.height*0.08;
+  static double topPaddingSize = MediaQuery.of(Get.context!).padding.top;
+
 
 
 

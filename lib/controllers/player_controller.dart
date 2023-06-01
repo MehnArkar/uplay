@@ -3,6 +3,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
+import 'package:rxdart/rxdart.dart';
 
 class PlayerController extends GetxController{
 
@@ -18,6 +19,10 @@ class PlayerController extends GetxController{
   final youtubeExplode = YoutubeExplode();
   YouTubeVideo? currentVideo;
   bool isLoading = false;
+
+
+
+
 
 
   play(YouTubeVideo video) async {
@@ -76,3 +81,4 @@ class PlayerController extends GetxController{
   }
 
 }
+
