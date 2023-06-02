@@ -9,6 +9,8 @@ import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:lottie/lottie.dart';
+import 'package:marquee/marquee.dart';
 
 class DownloadPage extends StatelessWidget {
   const DownloadPage({Key? key}) : super(key: key);
@@ -87,7 +89,7 @@ class DownloadPage extends StatelessWidget {
                                 ),
                               ),
                               if(playerController.isLoading)
-                                const CupertinoActivityIndicator(color: AppColors.primaryColor,)
+                                Lottie.asset('assets/lottie/wave.json')
                             ],
                           ),
                         )
@@ -102,6 +104,11 @@ class DownloadPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // playerController.currentVideo!=null && playerController.currentVideo!.id==video.id?
+                        // Marquee(
+                        //     text: video.title,
+                        //     style: AppConstants.textStyleMedium.copyWith(color: AppColors.primaryColor),
+                        // ):
                         Text(
                           video.title,
                           style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id?AppColors.primaryColor:Colors.white),

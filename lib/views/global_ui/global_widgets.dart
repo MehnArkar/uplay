@@ -6,3 +6,9 @@ Widget topPadding(){
     height: MediaQuery.of(Get.context!).padding.top,
   );
 }
+
+Widget botPadding(){
+  return SizedBox(
+    height: MediaQuery.of(Get.context!).padding.bottom,
+  );
+}

@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:uplayer/models/position_data.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:rxdart/rxdart.dart';
@@ -10,19 +11,13 @@ class PlayerController extends GetxController{
   @override
   void onInit() {
     super.onInit();
-    player.playerStateStream.listen((stage) {
-    });
-  }
 
+  }
 
   AudioPlayer player = AudioPlayer();
   final youtubeExplode = YoutubeExplode();
   YouTubeVideo? currentVideo;
   bool isLoading = false;
-
-
-
-
 
 
   play(YouTubeVideo video) async {
@@ -74,9 +69,9 @@ class PlayerController extends GetxController{
   seek(bool isPrevious) {
     Duration currentDuration =  player.position;
     if(isPrevious){
-      player.seek(currentDuration-const Duration(seconds: 10));
+      player.seek(currentDuration-const Duration(seconds: 15));
     }else{
-      player.seek(currentDuration+const Duration(seconds: 10));
+      player.seek(currentDuration+const Duration(seconds: 15));
     }
   }
 

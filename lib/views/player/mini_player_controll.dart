@@ -19,7 +19,7 @@ class MiniPlayerControll extends StatelessWidget {
       builder:(controller)=> StreamBuilder<PlayerState>(
         stream: controller.player.playerStateStream,
         builder:(context,snapshot){
-          PlayerState playerState = snapshot.data!;
+          PlayerState playerState = snapshot.data as PlayerState;
           return playerState.processingState==ProcessingState.ready || playerState.processingState==ProcessingState.buffering? ClipRRect(
             borderRadius: BorderRadius.circular(200),
             child: GestureDetector(
