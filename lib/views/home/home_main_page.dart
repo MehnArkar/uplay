@@ -11,7 +11,7 @@ import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/home/search_page.dart';
 import 'package:uplayer/views/home/home_page.dart';
 import 'package:uplayer/views/home/playlist_page.dart';
-import 'package:uplayer/views/home/profile_page.dart';
+import 'package:uplayer/views/home/download_page.dart';
 import '../global_ui/animate_background.dart';
 import '../player/mini_player_controll.dart';
 
@@ -58,17 +58,13 @@ class HomeMainPage extends StatelessWidget {
    switch(navBar){
      case NavBar.home:
        return const HomePage();
-       break;
      case NavBar.playlist:
        return const PlaylistPage();
-       break;
      case NavBar.download:
-       return const DownloadPage();
-       break;
+       return const SearchPage();
      case NavBar.profile:
-       return const ProfilePage();
-       break;
-   };
+       return const DownloadPage();
+   }
   }
 
   Widget navBar(){

@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:uplayer/controllers/download_controller.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
@@ -12,8 +13,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 
-class DownloadPage extends StatelessWidget {
-  const DownloadPage({Key? key}) : super(key: key);
+class SearchPage extends StatelessWidget {
+  const SearchPage({Key? key}) : super(key: key);
 
 
   @override
@@ -88,8 +89,9 @@ class DownloadPage extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              if(playerController.isLoading)
-                                Lottie.asset('assets/lottie/wave.json')
+                              playerController.isLoading?
+                                const CupertinoActivityIndicator(color: AppColors.primaryColor,) :
+                                Lottie.asset('assets/lottie/wave.json',)
                             ],
                           ),
                         )
@@ -118,7 +120,18 @@ class DownloadPage extends StatelessWidget {
               ],),
                   )),
               const SizedBox(width: 15,),
-              const Icon(Iconsax.arrow_down_2,color: Colors.grey,)
+              GetBuilder<DownloadController>(
+                builder: (controller) {
+                  bool isDownloading = controller.downloadingVideoMap.values.contains(video);
+                  return isDownloading?
+                  Container():
+                  GestureDetector(
+                      onTap: (){
+                        controller.download(video);
+                      },
+                      child: const Icon(Iconsax.arrow_down_2,color: Colors.grey,));
+                }
+              )
             ],
           ),
         ),

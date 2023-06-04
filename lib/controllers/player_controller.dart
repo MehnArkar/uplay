@@ -1,17 +1,14 @@
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
-import 'package:uplayer/models/position_data.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import 'package:rxdart/rxdart.dart';
 
 class PlayerController extends GetxController{
 
   @override
   void onInit() {
     super.onInit();
-
   }
 
   AudioPlayer player = AudioPlayer();

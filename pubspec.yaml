@@ -49,6 +49,9 @@ dependencies:
   rxdart: ^0.27.7
   lottie: ^2.3.2
   marquee: ^2.2.3
+  flutter_downloader: ^1.10.4
+  permission_handler: ^10.2.0
+  path_provider: ^2.0.15
 
 dev_dependencies:
   flutter_test:
