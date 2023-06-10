@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -30,8 +32,19 @@ class PlayerController extends GetxController{
 
     //Loadin music to play
     final manifest = await youtubeExplode.videos.streamsClient.getManifest(video.id);
-    final audioStreamInfo = manifest.muxed.withHighestBitrate();
-    final audioUrl = audioStreamInfo.url;
+    final audioStreamInfo = manifest.audioOnly.sortByBitrate();
+    String audioUrl = '';
+
+    if (Platform.isIOS) {
+      final List<AudioOnlyStreamInfo> m4aStreams = audioStreamInfo.where((element) => element.audioCodec.contains('mp4')).toList();
+
+      if (m4aStreams.isNotEmpty) {
+          audioUrl = m4aStreams.first.url.toString();
+      }
+    }else{
+      audioUrl = audioStreamInfo.first.url.toString();
+    }
+
     print(audioUrl);
 
     AudioSource source = AudioSource.uri(
