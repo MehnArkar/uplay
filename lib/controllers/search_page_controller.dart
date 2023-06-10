@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:youtube_api/youtube_api.dart';
+import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 import '../utils/constants/app_constant.dart';
 

@@ -30,7 +30,28 @@ class PlayerController extends GetxController{
     isLoading = true;
     update();
 
-    //Loadin music to play
+    String audioUrl = await getUrl(video);
+
+    AudioSource source = AudioSource.uri(
+      Uri.parse(audioUrl.toString()),
+      tag: MediaItem(
+        id: video.id??'0',
+        album: '',
+        title: video.title,
+        artUri: Uri.parse(video.thumbnail.high.url??''),
+      ),
+    );
+    await player.setAudioSource(source);
+
+    //Loading finish
+    isLoading= false;
+    update();
+
+    //Play
+    player.play();
+  }
+
+  Future<String> getUrl(YouTubeVideo video) async{
     final manifest = await youtubeExplode.videos.streamsClient.getManifest(video.id);
     final audioStreamInfo = manifest.audioOnly.sortByBitrate();
     String audioUrl = '';
@@ -39,32 +60,12 @@ class PlayerController extends GetxController{
       final List<AudioOnlyStreamInfo> m4aStreams = audioStreamInfo.where((element) => element.audioCodec.contains('mp4')).toList();
 
       if (m4aStreams.isNotEmpty) {
-          audioUrl = m4aStreams.first.url.toString();
+        audioUrl = m4aStreams.first.url.toString();
       }
     }else{
       audioUrl = audioStreamInfo.first.url.toString();
     }
-
-    print(audioUrl);
-
-    AudioSource source = AudioSource.uri(
-      Uri.parse(audioUrl.toString()),
-      tag: MediaItem(
-        // Specify a unique ID for each media item:
-        id: video.id??'0',
-        // Metadata to display in the notification:
-        album: '',
-        title: video.title,
-        artUri: Uri.parse(video.thumbnail.high.url??''),
-      ),
-    );
-    await player.setAudioSource(source);
-    //Loading finish
-    isLoading= false;
-    update();
-
-    //Play
-    player.play();
+    return audioUrl;
   }
 
 
