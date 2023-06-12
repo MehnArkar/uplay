@@ -6,6 +6,8 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:youtube_api/youtube_api.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
+import '../models/video.dart';
+
 class PlayerController extends GetxController{
 
   @override
@@ -15,11 +17,11 @@ class PlayerController extends GetxController{
 
   AudioPlayer player = AudioPlayer();
   final youtubeExplode = YoutubeExplode();
-  YouTubeVideo? currentVideo;
+  LocalVideo? currentVideo;
   bool isLoading = false;
 
 
-  play(YouTubeVideo video) async {
+  play(LocalVideo video) async {
     currentVideo = video;
     //Stop player if playing another
     if(player.playing){
@@ -38,7 +40,7 @@ class PlayerController extends GetxController{
         id: video.id??'0',
         album: '',
         title: video.title,
-        artUri: Uri.parse(video.thumbnail.high.url??''),
+        artUri: Uri.parse(video.url??''),
       ),
     );
     await player.setAudioSource(source);
@@ -51,7 +53,7 @@ class PlayerController extends GetxController{
     player.play();
   }
 
-  Future<String> getUrl(YouTubeVideo video) async{
+  Future<String> getUrl(LocalVideo video) async{
     final manifest = await youtubeExplode.videos.streamsClient.getManifest(video.id);
     final audioStreamInfo = manifest.audioOnly.sortByBitrate();
     String audioUrl = '';

@@ -105,7 +105,7 @@ class PlayerControllerPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo?.thumbnail.high.url??''),fit: BoxFit.cover)
+                  image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo?.url??''),fit: BoxFit.cover)
                 ),
               ),
             ),
