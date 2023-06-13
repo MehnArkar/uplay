@@ -1,6 +1,4 @@
 import 'package:get/get.dart';
-import 'package:uplayer/utils/constants/app_constant.dart';
-import 'package:youtube_api/youtube_api.dart';
 
 enum NavBar{home,playlist,download,profile}
 

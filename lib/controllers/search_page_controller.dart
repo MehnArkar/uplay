@@ -1,10 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:uplayer/models/video.dart';
+import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/services/youtube_service.dart';
-import 'package:youtube_api/youtube_api.dart';
-import 'package:youtube_explode_dart/youtube_explode_dart.dart';
-import '../utils/constants/app_constant.dart';
 
 class SearchPageController extends GetxController with GetSingleTickerProviderStateMixin{
   //Search
@@ -16,8 +13,8 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
   ScrollController scrollController = ScrollController();
   bool isPined = false;
 
-  YoutubeAPI ytApi = YoutubeAPI(AppConstants.youTubeApiKey);
-  List<LocalVideo> videoResult = [];
+
+  List<YoutubeVideo> videoResult = [];
   bool isSearching = false;
   bool isLoadMore = false;
 
@@ -56,10 +53,9 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
     isSearching = true;
     update();
 
-    List<YouTubeVideo> youtubeVideoList = await ytApi.search(query,type: 'video',videoDuration: 'short',);
-    for (var eachVideo in youtubeVideoList) {
-      videoResult.add(YoutubeServices.convertToLocal(eachVideo));
-    }
+
+    videoResult = await YoutubeServices.search(query);
+
 
     isSearching=false;
     update();
@@ -69,10 +65,8 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
     isLoadMore = true;
     update();
 
-    List<YouTubeVideo> youtubeVideoList = await ytApi.nextPage();
-    for (var eachVideo in youtubeVideoList) {
-      videoResult.add(YoutubeServices.convertToLocal(eachVideo));
-    }
+    List<YoutubeVideo> moreVideoList = await YoutubeServices.search(txtSearch.text,isLoadMore: true);
+    videoResult.addAll(moreVideoList);
 
     isLoadMore=false;
     update();

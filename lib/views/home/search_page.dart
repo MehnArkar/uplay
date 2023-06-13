@@ -5,11 +5,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:uplayer/controllers/download_controller.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
-import 'package:uplayer/models/video.dart';
+import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:youtube_api/youtube_api.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
@@ -52,7 +51,7 @@ class SearchPage extends StatelessWidget {
   }
 
 
-  Widget eachVideoList(LocalVideo video){
+  Widget eachVideoList(YoutubeVideo video){
     return GetBuilder<PlayerController>(
       builder:(playerController)=> GestureDetector(
         onTap: (){
@@ -69,7 +68,7 @@ class SearchPage extends StatelessWidget {
                 height: Get.width*0.15,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(15),
-                  image: DecorationImage(image: CachedNetworkImageProvider(video.url??''),fit: BoxFit.cover)
+                  image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnails.high??''),fit: BoxFit.cover)
                 ),
                 child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id?
                         ClipRRect(
@@ -116,19 +115,15 @@ class SearchPage extends StatelessWidget {
                           video.title,
                           style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id?AppColors.primaryColor:Colors.white),
                           maxLines: 1,overflow: TextOverflow.ellipsis,),
-                        Text(video.duration??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
+                        Text(video.channelTitle.replaceFirst('VEVO','')??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
 
               ],),
                   )),
               const SizedBox(width: 15,),
               GetBuilder<DownloadController>(
                 builder: (controller) {
-                  bool isDownloading = controller.downloadingVideoMap.values.contains(video);
-                  return isDownloading?
-                  Container():
-                  GestureDetector(
+                  return GestureDetector(
                       onTap: (){
-                        controller.download(video);
                       },
                       child: const Icon(Iconsax.arrow_down_2,color: Colors.grey,));
                 }

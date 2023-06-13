@@ -74,7 +74,7 @@ class MiniPlayerControll extends StatelessWidget {
       height: Get.width*0.13,
       decoration: BoxDecoration(
           shape: BoxShape.circle,
-          image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo==null?'':controller.currentVideo!.url!),fit: BoxFit.cover)
+          image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo==null?'':controller.currentVideo!.thumbnails.high),fit: BoxFit.cover)
       ),
     );
   }

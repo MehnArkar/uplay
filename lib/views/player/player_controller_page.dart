@@ -105,7 +105,7 @@ class PlayerControllerPage extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo?.url??''),fit: BoxFit.cover)
+                  image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo?.thumbnails.high??''),fit: BoxFit.cover)
                 ),
               ),
             ),
@@ -121,8 +121,7 @@ class PlayerControllerPage extends StatelessWidget {
                 const Icon(Icons.favorite_outline_outlined,color: Colors.white,)
               ],
             )
-          ],
-    ),
+          ]),
         ),
       );
   }
