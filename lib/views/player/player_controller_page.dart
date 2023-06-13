@@ -114,13 +114,17 @@ class PlayerControllerPage extends StatelessWidget {
               children: [
                 Expanded(
                     child: Text(controller.currentVideo!.title,
-                        style:AppConstants.textStyleTitleSmall
+                        style:AppConstants.textStyleTitleSmall,
+                        maxLines: 1,
                     )
                 ),
                 const SizedBox(width: 15,),
                 const Icon(Icons.favorite_outline_outlined,color: Colors.white,)
               ],
-            )
+            ),
+            const SizedBox(height: 10,),
+            Text(controller.currentVideo!.channelTitle,
+                style: AppConstants.textStyleMedium.copyWith(color: Colors.grey),)
           ]),
         ),
       );
@@ -187,11 +191,14 @@ class PlayerControllerPage extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              GestureDetector(
-                  onTap: (){
+              IconButton(
+                  onPressed: playerController.player.hasPrevious?
+                  (){
                     playerController.seek(true);
-                  },
-                  child:const Icon(Iconsax.previous5,color: Colors.white,size: 35,)),
+                  }:null,
+                  color: Colors.white,
+                  disabledColor: Colors.grey,
+                  icon:const Icon(Iconsax.previous5,size: 35,)),
               const SizedBox(width: 40,),
               GestureDetector(
                   onTap: (){
@@ -202,11 +209,14 @@ class PlayerControllerPage extends StatelessWidget {
                       backgroundColor: AppColors.primaryColor,
                       child: Icon(playerState.playing? Iconsax.pause5: Iconsax.play5 ,color: Colors.white,))),
               const SizedBox(width: 40,),
-              GestureDetector(
-                  onTap: (){
+              IconButton(
+                  onPressed: playerController.player.hasNext?
+                      (){
                     playerController.seek(false);
-                  },
-                  child:const Icon(Iconsax.next5,color: Colors.white,size: 35,))
+                  }:null,
+                  color: Colors.white,
+                  disabledColor: Colors.grey,
+                  icon:const Icon(Iconsax.next5,size: 35,)),
             ],
           )
         );

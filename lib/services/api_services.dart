@@ -8,9 +8,9 @@ class ApiService{
   static Future<http.Response?> getYoutubeVideo(String searchedQuery,{String? pageToken}) async{
     String url;
     if(pageToken!=null){
-      url = 'https://youtube.googleapis.com/youtube/v3/search?part=snippet&maxResults=15&pageToken=$pageToken&q=${Uri.encodeQueryComponent(searchedQuery)}&key=${AppConstants.youTubeApiKey}';
+      url = 'https://youtube.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=15&pageToken=$pageToken&q=${Uri.encodeQueryComponent(searchedQuery)}&key=${AppConstants.youTubeApiKey}';
     }else{
-      url = 'https://youtube.googleapis.com/youtube/v3/search?part=snippet&&maxResults=15&q=${Uri.encodeQueryComponent(searchedQuery)}&key=${AppConstants.youTubeApiKey}';
+      url = 'https://youtube.googleapis.com/youtube/v3/search?part=snippet&type=video&maxResults=15&q=${Uri.encodeQueryComponent(searchedQuery)}&key=${AppConstants.youTubeApiKey}';
     }
 
     http.Response? response;

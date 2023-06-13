@@ -108,23 +108,25 @@ class MiniPlayerControll extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        GestureDetector(
-            onTap: (){
+        IconButton(
+            onPressed:controller.player.hasPrevious? (){
               controller.seek(true);
-            },
-            child:const Icon(Iconsax.previous5,color: Colors.white,)),
-        const SizedBox(width: 10,),
+            }:null,
+            color: Colors.white,
+            disabledColor: Colors.grey,
+            icon: const Icon(Iconsax.previous5,)),
         GestureDetector(
             onTap: (){
               controller.togglePlayPause();
             },
             child: Icon(controller.player.playerState.playing? Iconsax.pause5: Iconsax.play5 ,color: Colors.white,)),
-        const SizedBox(width: 10,),
-        GestureDetector(
-            onTap: (){
+        IconButton(
+            onPressed:controller.player.hasPrevious? (){
               controller.seek(false);
-            },
-            child:const Icon(Iconsax.next5,color: Colors.white,))
+            }:null,
+            color: Colors.white,
+            disabledColor: Colors.grey,
+            icon:const  Icon(Iconsax.next5)),
       ],
     );
   }

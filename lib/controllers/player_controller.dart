@@ -19,14 +19,15 @@ class PlayerController extends GetxController{
   bool isLoading = false;
 
 
+
   play(YoutubeVideo video) async {
     currentVideo = video;
     //Stop player if playing another
     if(player.playing){
       player.stop();
     }
-    //Update data
 
+    //Update data
     isLoading = true;
     update();
 
@@ -38,7 +39,7 @@ class PlayerController extends GetxController{
         id: video.id??'0',
         album: '',
         title: video.title,
-        artUri: Uri.parse(video.url??''),
+        artUri: Uri.parse(video.thumbnails.high??''),
       ),
     );
     await player.setAudioSource(source);
