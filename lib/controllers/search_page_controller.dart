@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/services/youtube_service.dart';
+import 'package:uplayer/utils/log/super_print.dart';
 
 class SearchPageController extends GetxController with GetSingleTickerProviderStateMixin{
   //Search
@@ -43,7 +44,8 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
         update();
       }
 
-      if(scrollController.position.pixels==scrollController.position.maxScrollExtent){
+      if(scrollController.position.pixels>=scrollController.position.maxScrollExtent){
+        superPrint('Load more');
         await loadMore();
       }
     });
