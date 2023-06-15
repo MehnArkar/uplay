@@ -4,11 +4,12 @@ import 'dart:ui';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:uplayer/controllers/player_controller.dart';
-
+import 'package:uplayer/utils/constants/app_constant.dart';
 import '../models/youtube_video.dart';
+import '../utils/log/super_print.dart';
 import '../views/global_ui/dialog.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 @pragma('vm:entry-point')
 void downloadCallback(String id, int status, int progress) {
@@ -18,6 +19,8 @@ void downloadCallback(String id, int status, int progress) {
 
 
 class DownloadController extends GetxController{
+  Box<YoutubeVideo> allVideoBox = Hive.box<YoutubeVideo>(AppConstants.boxAllVideos);
+  Map<String,YoutubeVideo> downloadingVideo ={};
 
   @override
   void onInit() {
@@ -44,15 +47,18 @@ class DownloadController extends GetxController{
       bindBackgroundIsolate();
       return;
     }
-    port.listen((dynamic data) {
-      // String id = data[0];
-      // DownloadTaskStatus status = DownloadTaskStatus(data[1]);
-      // int progress = data[2];
-      // DownloadTask task = downloadsList[id]!;
-      // DownloadTask downloadTask = DownloadTask(taskId: task.taskId, status: status, progress: progress, url: task.url, filename: task.filename, savedDir: task.savedDir, timeCreated: task.timeCreated, allowCellular: task.allowCellular);
-      // downloadsList[id]=downloadTask;
-      // setState(() {
-      // });
+    port.listen((dynamic data) async {
+      String id = data[0];
+      DownloadTaskStatus status = DownloadTaskStatus(data[1]);
+      int progress = data[2];
+      if(status==DownloadTaskStatus.complete) {
+        ///If download complete remove form downloading and add to local
+        List<DownloadTask>? taskList = await FlutterDownloader.loadTasksWithRawQuery(query: "SELECT * FROM task WHERE task_id='$id'");
+        YoutubeVideo currentVideo = downloadingVideo[taskList?.first.filename?.replaceFirst('.mp3','')]!;
+        await allVideoBox.put(currentVideo.id,currentVideo);
+        downloadingVideo.remove(currentVideo.id);
+        update();
+      }
     });
   }
 
@@ -61,25 +67,33 @@ class DownloadController extends GetxController{
   }
 
    download(YoutubeVideo video) async{
-    PermissionStatus status = await Permission.storage.request();
-    if(status == PermissionStatus.granted || status == PermissionStatus.limited) {
+
+      downloadingVideo.addEntries([MapEntry(video.id, video)]);
+      update();
+
       //Get url
       String url = await Get.find<PlayerController>().getUrl(video);
 
       //Save Dir
       Directory dir = await getApplicationDocumentsDirectory();
 
-      final taskId = await FlutterDownloader.enqueue(
-        url: url,
-        fileName: '${video.id}.mp3',
-        savedDir: dir.path,
-        showNotification: true,
-        openFileFromNotification: false,
-        saveInPublicStorage: true
-      );
-    }else{
-      showCustomDialog(title: 'Permission denied!', contextTitle: 'Please give storage permission to download');
-    }
+     try{
+       await FlutterDownloader.enqueue(
+           url: url,
+           fileName: '${video.id}.mp3',
+           savedDir: dir.path,
+           showNotification: true,
+           openFileFromNotification: false,
+           saveInPublicStorage: true
+       );
+     }catch(e){
+       superPrint('error in download $e');
+       showCustomDialog(title: 'Download fail', contextTitle: 'Something went wrong');
+       allVideoBox.delete(video.id);
+     }
+
   }
+
+
 
 }

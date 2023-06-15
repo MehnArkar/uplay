@@ -1,13 +1,13 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:uplayer/controllers/download_controller.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
-import 'package:uplayer/services/download_service.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:flutter/cupertino.dart';
@@ -126,13 +126,16 @@ class SearchPage extends StatelessWidget {
                       )),
                   const SizedBox(width: 15,),
                   GetBuilder<DownloadController>(
-                    builder: (controller) {
-                      return GestureDetector(
+                    builder:(controller)=> ValueListenableBuilder<Box<YoutubeVideo>>(
+                      valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxAllVideos).listenable(),
+                      builder:(context,box,widget)=>box.containsKey(video.id)||controller.downloadingVideo.containsKey(video.id)?
+                          Container()
+                          : GestureDetector(
                           onTap: (){
                             Get.find<DownloadController>().download(video);
                           },
-                          child: const Icon(Iconsax.arrow_down_2,color: Colors.grey,));
-                    }
+                          child: const Icon(Iconsax.arrow_down_2,color: Colors.grey,)),
+                    ),
                   )
                 ],
               ),
