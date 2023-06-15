@@ -1,13 +1,11 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:uplayer/controllers/splash_screen_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
-import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/app_icon.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
+import 'package:uplayer/views/splas_screen/sec_splash_screen.dart';
 
 class MainSplashScreen extends StatelessWidget {
   const MainSplashScreen({Key? key}) : super(key: key);
@@ -25,15 +23,19 @@ class MainSplashScreen extends StatelessWidget {
   }
 
   Widget bodyWidget(){
-    return SizedBox(
-      width: double.maxFinite,
-      height: double.maxFinite,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          pageViewPanel(),
-          overlayWidget(),
-        ],
+    return GetBuilder<SplashScreenController>(
+      builder:(controller)=> SizedBox(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        child:controller.isFirstTime? Stack(
+          alignment: Alignment.center,
+          children: [
+            pageViewPanel(),
+            overlayWidget(),
+          ],
+        ):
+         const SecondarySplashScreen()
+        ,
       ),
     );
   }

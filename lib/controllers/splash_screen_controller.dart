@@ -1,10 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:hive/hive.dart';
 import 'package:uplayer/models/splash_data.dart';
+import 'package:uplayer/models/user_data.dart';
+import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/home/home_main_page.dart';
 
 class SplashScreenController extends GetxController with GetTickerProviderStateMixin {
   late AnimationController animationController;
+  Box<UserData> userDataBox = Hive.box<UserData>(AppConstants.boxUserData);
+  bool isFirstTime = true;
 
   @override
   void onInit() {
@@ -12,6 +17,18 @@ class SplashScreenController extends GetxController with GetTickerProviderStateM
     super.onInit();
     animationController = AnimationController(vsync: this,duration:const Duration(milliseconds: 1300));
     animationController.forward();
+    
+    checkIfFirstTime();
+  }
+  
+  checkIfFirstTime(){
+    UserData? userData = userDataBox.get('data');
+    if(userData!=null){
+      isFirstTime=false;
+      update();
+    }else{
+      userDataBox.put('data', UserData(isFirstTime: false));
+    }
   }
 
   PageController pageController = PageController();

@@ -7,6 +7,9 @@ class AppConstants {
   //Key
   static const String youTubeApiKey = 'AIzaSyB_0-Q0_Scv_Zx1zZFA98X7iTfWStNywL0';
 
+  //Hive Database
+  static const String boxUserData = 'userData';
+
   //Icon
   static const String appIcon = 'assets/icons/appIcon.svg';
   static const String homeIcon = 'assets/icons/home.svg';

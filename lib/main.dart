@@ -3,6 +3,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:uplayer/services/local_services.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/splas_screen/main_splash_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -25,11 +26,15 @@ void main() async{
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
+  //init hive
+  await Hive.initFlutter();
+
+  await LocalService.registerHiveAdapter();
+  await LocalService.openInitialBox();
   //Inject Conroller
   Get.put(GlobalController());
 
-  //init hive
-  await Hive.initFlutter();
+
   runApp(const MyApp());
 }
 
