@@ -12,19 +12,22 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   //Set delay for responsive
   await Future.delayed(const Duration(milliseconds: 1000));
-  //Inject Conroller
-  Get.put(GlobalController());
+
+  //initialize Downloader
+  await FlutterDownloader.initialize(
+      debug: true, // optional: set to false to disable printing logs to console (default: true)
+      ignoreSsl: true // option: set to false to disable working with http links (default: false)
+  );
+
   //initializ JustAudio
   await JustAudioBackground.init(
     androidNotificationChannelId: 'com.ryanheise.bg_demo.channel.audio',
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  //initialize Downloader
-  await FlutterDownloader.initialize(
-      debug: true, // optional: set to false to disable printing logs to console (default: true)
-      ignoreSsl: true // option: set to false to disable working with http links (default: false)
-  );
+  //Inject Conroller
+  Get.put(GlobalController());
+
   //init hive
   await Hive.initFlutter();
   runApp(const MyApp());

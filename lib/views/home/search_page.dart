@@ -7,6 +7,7 @@ import 'package:uplayer/controllers/download_controller.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
+import 'package:uplayer/services/download_service.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:flutter/cupertino.dart';
@@ -128,6 +129,7 @@ class SearchPage extends StatelessWidget {
                     builder: (controller) {
                       return GestureDetector(
                           onTap: (){
+                            Get.find<DownloadController>().download(video);
                           },
                           child: const Icon(Iconsax.arrow_down_2,color: Colors.grey,));
                     }
