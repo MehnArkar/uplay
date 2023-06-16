@@ -10,7 +10,7 @@ import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/home/search_page.dart';
 import 'package:uplayer/views/home/home_page.dart';
-import 'package:uplayer/views/home/playlist_page.dart';
+import 'package:uplayer/views/home/library/library_page.dart';
 import 'package:uplayer/views/home/download_page.dart';
 import '../global_ui/animate_background.dart';
 import '../player/mini_player_controll.dart';
@@ -93,7 +93,7 @@ class HomeMainPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 eachNavItem(icon: Iconsax.home,title: 'Home',navBar:NavBar.home),
-                eachNavItem(icon: Iconsax.music_square,title: 'Playlist',navBar:NavBar.playlist),
+                eachNavItem(icon: Iconsax.music_square,title: 'Library',navBar:NavBar.playlist),
                 eachNavItem(icon: Iconsax.search_normal,title: 'Search',navBar:NavBar.download),
                 eachNavItem(icon: Iconsax.arrow_down_2,title: 'Download',navBar:NavBar.profile),
               ],

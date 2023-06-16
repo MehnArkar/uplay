@@ -5,6 +5,7 @@ import 'package:uplayer/controllers/player_controller.dart';
 
 import '../utils/constants/app_constant.dart';
 import 'download_controller.dart';
+import 'library_controller.dart';
 
 class GlobalController extends GetxController{
 
@@ -22,6 +23,7 @@ class GlobalController extends GetxController{
   initController() {
      Get.put(PlayerController());
      Get.put(DownloadController());
+     Get.put(LibraryController());
   }
 
   Future<void> setTextScaleFactor() async{

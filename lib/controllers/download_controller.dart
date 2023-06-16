@@ -4,7 +4,9 @@ import 'dart:ui';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uplayer/controllers/library_controller.dart';
 import 'package:uplayer/controllers/player_controller.dart';
+import 'package:uplayer/models/playlist.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import '../models/youtube_video.dart';
 import '../utils/log/super_print.dart';
@@ -70,8 +72,17 @@ class DownloadController extends GetxController{
         ///If download complete remove form downloading and add to local
         List<DownloadTask>? taskList = await FlutterDownloader.loadTasksWithRawQuery(query: "SELECT * FROM task WHERE task_id='$id'");
         YoutubeVideo currentVideo = downloadingVideo[taskList?.first.filename?.replaceFirst('.mp3','')]!;
+        ///Added to all Songs box
         await allVideoBox.put(currentVideo.id,currentVideo);
+
+        ///Add to library box
+        LibraryController libraryController = Get.find();
+        libraryController.addNewToPlaylist('Saved Songs', currentVideo);
+
+        ///Remove from variable
         downloadingVideo.remove(currentVideo.id);
+
+
       }
       update();
     });
