@@ -7,6 +7,7 @@ import 'package:uplayer/controllers/library_controller.dart';
 import 'package:uplayer/models/playlist.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/views/home/library/playlist_screen.dart';
 
 class PlaylistPage extends StatelessWidget {
   const PlaylistPage({Key? key}) : super(key: key);
@@ -28,15 +29,20 @@ class PlaylistPage extends StatelessWidget {
   }
 
   Widget eachPlaylist(Playlist playlist){
-    return Container(
-      alignment: Alignment.center,
-      decoration: BoxDecoration(color: Colors.grey,borderRadius: BorderRadius.circular(15)),
-      child:Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Icon(Iconsax.music,color: AppColors.primaryColor,),
-          Text('${playlist.name}-${playlist.videoList.length}')
-        ],
+    return GestureDetector(
+      onTap: (){
+        Get.to(PlaylistScreen(playlist: playlist));
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(color: Colors.grey,borderRadius: BorderRadius.circular(15)),
+        child:Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Iconsax.music,color: AppColors.primaryColor,),
+            Text('${playlist.name}-${playlist.videoList.length}')
+          ],
+        ),
       ),
     );
   }

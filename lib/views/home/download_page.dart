@@ -44,6 +44,8 @@ class DownloadPage extends StatelessWidget {
 
   Widget eachDownloadWidget(DownloadTask task,YoutubeVideo video){
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
           margin:const EdgeInsets.only(bottom: 15),

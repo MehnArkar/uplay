@@ -22,7 +22,7 @@ class PlayerController extends GetxController{
 
 
 
-  play(YoutubeVideo video) async {
+  play(YoutubeVideo video,{bool isNetwork = true}) async {
     currentVideo = video;
     //Stop player if playing another
     if(player.playing){
@@ -32,34 +32,35 @@ class PlayerController extends GetxController{
     //Update data
     isLoading = true;
     update();
+    if(isNetwork) {
+      String audioUrl = await getUrl(video);
 
-    String audioUrl = await getUrl(video);
+      AudioSource source = AudioSource.uri(
+        Uri.parse(audioUrl.toString()),
+        tag: MediaItem(
+          id: video.id ?? '0',
+          album: '',
+          title: video.title,
+          artUri: Uri.parse(video.thumbnails.high ?? ''),
+        ),
+      );
+      await player.setAudioSource(source);
+    }else {
+      Directory dir = await getApplicationDocumentsDirectory();
+      String audioUrl ='${dir.path}/${video.id}.mp3';
+      superPrint(audioUrl);
 
-    AudioSource source = AudioSource.uri(
-      Uri.parse(audioUrl.toString()),
-      tag: MediaItem(
-        id: video.id??'0',
-        album: '',
-        title: video.title,
-        artUri: Uri.parse(video.thumbnails.high??''),
-      ),
-    );
-    await player.setAudioSource(source);
-
-    // Directory dir = await getApplicationDocumentsDirectory();
-    // String audioUrl ='${dir.path}/${video.id}.mp3';
-    // superPrint(audioUrl);
-    //
-    // AudioSource source = AudioSource.file(
-    //     audioUrl,
-    //     tag: MediaItem(
-    //       id: video.id??'0',
-    //       album: '',
-    //       title: video.title,
-    //       artUri: Uri.parse(video.thumbnails.high??''),
-    //     ),
-    // );
-    // await player.setAudioSource(source);
+      AudioSource source = AudioSource.file(
+          audioUrl,
+          tag: MediaItem(
+            id: video.id??'0',
+            album: '',
+            title: video.title,
+            artUri: Uri.parse(video.thumbnails.high??''),
+          ),
+      );
+      await player.setAudioSource(source);
+    }
 
     //Loading finish
     isLoading= false;
