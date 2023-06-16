@@ -21,6 +21,8 @@ void downloadCallback(String id, int status, int progress) {
 class DownloadController extends GetxController{
   Box<YoutubeVideo> allVideoBox = Hive.box<YoutubeVideo>(AppConstants.boxAllVideos);
   Map<String,YoutubeVideo> downloadingVideo ={};
+  Map<String,DownloadTask> downloadingTask = {};
+  bool isLoading = false;
 
   @override
   void onInit() {
@@ -39,9 +41,7 @@ class DownloadController extends GetxController{
   final ReceivePort port = ReceivePort();
 
   void bindBackgroundIsolate() {
-    bool isSuccess = IsolateNameServer.registerPortWithName(
-        port.sendPort, 'downloader_send_port');
-    print('GG $isSuccess');
+    bool isSuccess = IsolateNameServer.registerPortWithName(port.sendPort, 'downloader_send_port');
     if (!isSuccess) {
       unbindBackgroundIsolate();
       bindBackgroundIsolate();
@@ -51,14 +51,29 @@ class DownloadController extends GetxController{
       String id = data[0];
       DownloadTaskStatus status = DownloadTaskStatus(data[1]);
       int progress = data[2];
+
+      if(downloadingTask.keys.contains(id)){
+        DownloadTask currentTask = downloadingTask[id]!;
+        DownloadTask updateTask = DownloadTask(
+            taskId: currentTask.taskId,
+            status: status,
+            progress: progress,
+            url: currentTask.url,
+            filename: currentTask.filename,
+            savedDir: currentTask.savedDir,
+            timeCreated: currentTask.timeCreated,
+            allowCellular: currentTask.allowCellular);
+        downloadingTask[id]=updateTask;
+      }
+
       if(status==DownloadTaskStatus.complete) {
         ///If download complete remove form downloading and add to local
         List<DownloadTask>? taskList = await FlutterDownloader.loadTasksWithRawQuery(query: "SELECT * FROM task WHERE task_id='$id'");
         YoutubeVideo currentVideo = downloadingVideo[taskList?.first.filename?.replaceFirst('.mp3','')]!;
         await allVideoBox.put(currentVideo.id,currentVideo);
         downloadingVideo.remove(currentVideo.id);
-        update();
       }
+      update();
     });
   }
 
@@ -66,7 +81,7 @@ class DownloadController extends GetxController{
     IsolateNameServer.removePortNameMapping('downloader_send_port');
   }
 
-   download(YoutubeVideo video) async{
+   void download(YoutubeVideo video) async{
 
       downloadingVideo.addEntries([MapEntry(video.id, video)]);
       update();
@@ -84,7 +99,7 @@ class DownloadController extends GetxController{
            savedDir: dir.path,
            showNotification: true,
            openFileFromNotification: false,
-           saveInPublicStorage: true
+           saveInPublicStorage: false
        );
      }catch(e){
        superPrint('error in download $e');
@@ -92,6 +107,24 @@ class DownloadController extends GetxController{
        allVideoBox.delete(video.id);
      }
 
+  }
+  
+  Future<void> getDownloadingTask() async{
+    superPrint('Getting new task');
+    downloadingTask.clear();
+    isLoading=true;
+    update();
+
+    await Future.delayed(const Duration(milliseconds: 1000));
+
+    List<DownloadTask> allTask =await FlutterDownloader.loadTasks()??[];
+    List<DownloadTask> runningTask =  allTask.where((task) => task.status==DownloadTaskStatus.running).toList();
+    for (var task in runningTask) {
+      downloadingTask.addEntries([MapEntry(task.taskId, task)]);
+    }
+
+    isLoading=false;
+    update();
   }
 
 

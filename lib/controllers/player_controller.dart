@@ -2,7 +2,9 @@ import 'dart:io';
 import 'package:get/get.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:uplayer/models/youtube_video.dart';
+import 'package:uplayer/utils/log/super_print.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 
@@ -43,6 +45,21 @@ class PlayerController extends GetxController{
       ),
     );
     await player.setAudioSource(source);
+
+    // Directory dir = await getApplicationDocumentsDirectory();
+    // String audioUrl ='${dir.path}/${video.id}.mp3';
+    // superPrint(audioUrl);
+    //
+    // AudioSource source = AudioSource.file(
+    //     audioUrl,
+    //     tag: MediaItem(
+    //       id: video.id??'0',
+    //       album: '',
+    //       title: video.title,
+    //       artUri: Uri.parse(video.thumbnails.high??''),
+    //     ),
+    // );
+    // await player.setAudioSource(source);
 
     //Loading finish
     isLoading= false;
