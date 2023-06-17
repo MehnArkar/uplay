@@ -14,14 +14,17 @@ class HomePage extends StatelessWidget {
     return Column(
       children: [
         topPadding(),
-        topPanel(),
+        appBarPanel(),
         Expanded(child: imageBannerPanel()),
       ],
     );
   }
 
-  Widget topPanel(){
-    return const Center(child: AppIconWidget(),);
+  Widget appBarPanel(){
+    return const Padding(
+      padding:  EdgeInsets.symmetric(vertical: 15),
+      child:  Center(child: AppIconWidget(),),
+    );
   }
 
   Widget imageBannerPanel(){

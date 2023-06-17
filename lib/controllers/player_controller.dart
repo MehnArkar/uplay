@@ -13,6 +13,12 @@ class PlayerController extends GetxController{
   @override
   void onInit() {
     super.onInit();
+    player.processingStateStream.listen((state) {
+      if(state==ProcessingState.completed){
+        currentVideo=null;
+        update();
+      }
+    });
   }
 
   AudioPlayer player = AudioPlayer();

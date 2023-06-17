@@ -14,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
+import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -75,7 +76,7 @@ class SearchPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                       image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnails.high??''),fit: BoxFit.cover)
                     ),
-                    child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id && (snapShot.data!.processingState!=ProcessingState.completed)?
+                    child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id && (snapShot.data?.processingState!=ProcessingState.completed)?
                             ClipRRect(
                               borderRadius: BorderRadius.circular(14),
                               child: Stack(
@@ -95,7 +96,7 @@ class SearchPage extends StatelessWidget {
                                     ),
                                   ),
                                   playerController.isLoading?
-                                    const CupertinoActivityIndicator(color: AppColors.primaryColor,) :
+                                    const AnimatedDot() :
                                     Lottie.asset('assets/lottie/wave.json',)
                                 ],
                               ),
@@ -118,7 +119,7 @@ class SearchPage extends StatelessWidget {
                             // ):
                             Text(
                               video.title,
-                              style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id && snapShot.data!.processingState!=ProcessingState.completed?AppColors.primaryColor:Colors.white),
+                              style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id && snapShot.data!=null && snapShot.data!.processingState!=ProcessingState.completed?AppColors.primaryColor:Colors.white),
                               maxLines: 1,overflow: TextOverflow.ellipsis,),
                             Text(video.channelTitle.replaceFirst('VEVO','')??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
 

@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -6,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
+import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
 import 'package:uplayer/views/player/player_controller_page.dart';
 
 import '../../utils/constants/app_constant.dart';
@@ -20,7 +22,9 @@ class MiniPlayerControll extends StatelessWidget {
         stream: controller.player.playerStateStream,
         builder:(context,snapshot){
           PlayerState playerState = snapshot.data as PlayerState;
-          return playerState.processingState==ProcessingState.ready || playerState.processingState==ProcessingState.buffering? ClipRRect(
+          // return playerState.processingState==ProcessingState.ready || playerState.processingState==ProcessingState.buffering?
+          return controller.currentVideo!=null?
+          ClipRRect(
             borderRadius: BorderRadius.circular(200),
             child: GestureDetector(
               onTap: (){
@@ -29,18 +33,37 @@ class MiniPlayerControll extends StatelessWidget {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: Center(
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 10.0,
-                          sigmaY: 10.0,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          image:DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo!.thumbnails.high,),fit: BoxFit.cover),
                         ),
-                        child: Container(
-                          color: Colors.grey.withOpacity(0.5),
-                        ),
-                      ),
-                    ),
+                            child: BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 10.0,
+                                sigmaY: 10.0,
+                              ),
+                              child: Container(
+                                color: Colors.black.withOpacity(0.25),
+                              ),
+                      )
+                    )
                   ),
+                  // Positioned.fill(
+                  //   child: Center(
+                  //     child: BackdropFilter(
+                  //       filter: ImageFilter.blur(
+                  //         sigmaX: 10.0,
+                  //         sigmaY: 10.0,
+                  //       ),
+                  //       child: Container(
+                  //         decoration: BoxDecoration(
+                  //           color: Colors.grey.withOpacity(0.1),
+                  //           image:DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo!.thumbnails.high,),fit: BoxFit.cover),
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // ),
                   Container(
                     width: double.maxFinite,
                     padding:const EdgeInsets.symmetric(horizontal: 12,vertical: 8),
@@ -75,6 +98,29 @@ class MiniPlayerControll extends StatelessWidget {
       decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(image: CachedNetworkImageProvider(controller.currentVideo==null?'':controller.currentVideo!.thumbnails.high),fit: BoxFit.cover)
+      ),
+      child:!controller.isLoading?Container(): ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Positioned.fill(
+              child: Center(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(
+                    sigmaX: 1.0,
+                    sigmaY: 1.0,
+                  ),
+                  child: Container(
+                    color: Colors.black.withOpacity(0.25),
+                    child: AnimatedDot()
+                  ),
+                ),
+              ),
+            ),
+
+          ],
+        ),
       ),
     );
   }

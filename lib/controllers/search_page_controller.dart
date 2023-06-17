@@ -64,14 +64,14 @@ class SearchPageController extends GetxController with GetSingleTickerProviderSt
   }
 
   loadMore() async{
-    isLoadMore = true;
-    update();
-
-    List<YoutubeVideo> moreVideoList = await YoutubeServices.search(txtSearch.text,isLoadMore: true);
-    videoResult.addAll(moreVideoList);
-
-    isLoadMore=false;
-    update();
+    // isLoadMore = true;
+    // update();
+    //
+    // List<YoutubeVideo> moreVideoList = await YoutubeServices.search(txtSearch.text,isLoadMore: true);
+    // videoResult.addAll(moreVideoList);
+    //
+    // isLoadMore=false;
+    // update();
   }
 
 
