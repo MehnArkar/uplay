@@ -102,10 +102,78 @@ class PlaylistPage extends StatelessWidget {
             bottom: 0,
             right: 25,
             child: IconButton(
-                onPressed: (){},
+                onPressed: (){
+                  showCreatePlaylistSheet();
+                },
                 icon: const Icon(Iconsax.add_circle,color: Colors.white,)))
       ],
     );
+  }
+
+  showCreatePlaylistSheet(){
+
+      showModalBottomSheet(
+          context: Get.context!,
+          isScrollControlled: true,
+          backgroundColor: Colors.transparent,
+          shape:const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
+          ),
+          builder: (ctx){
+            return
+              ClipRRect(
+                borderRadius:const BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25)),
+                child: SizedBox(
+                width: Get.width,
+                height: Get.height*0.75,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                        child: BackdropFilter(
+                            filter: ImageFilter.blur(
+                              sigmaX: 20,
+                              sigmaY: 20,
+                              tileMode: TileMode.repeated
+                            ),
+                          child: Container(
+                            color: Colors.white.withOpacity(0.15),
+                          ),
+                        )
+                    ),
+                    Container(
+                      padding:const EdgeInsets.symmetric(horizontal: 25,vertical: 15),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Create Playlist',style: AppConstants.textStyleTitleMedium,),
+                          const SizedBox(height: 10,),
+                          TextField(
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(horizontal: 15,vertical: 10),
+                              fillColor: Colors.grey,
+                                filled: true,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                  borderSide:const BorderSide(color: Colors.transparent)
+                                ),
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(100),
+                                  borderSide:const BorderSide(color: AppColors.primaryColor,width: 1.5)
+                              ),
+                            ),
+                          )
+
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+            ),
+              );
+          });
   }
 
 }

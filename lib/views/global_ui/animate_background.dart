@@ -70,7 +70,7 @@ class _AnimateBackgroundState extends State<AnimateBackground> {
             ClipRRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 20,sigmaY: 20),
-                child: Container(color: Colors.black.withOpacity(0.65),),),
+                child: Container(color: Colors.black.withOpacity(0.5),),),
             ))
           ],
         ),

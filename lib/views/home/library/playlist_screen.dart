@@ -33,8 +33,8 @@ class PlaylistScreen extends StatelessWidget {
         child: ValueListenableBuilder<Box<Playlist>>(
             valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
             builder:(context,box,widget) {
-              Iterable<Playlist> currentPlaylist = box.values;
-              List<YoutubeVideo> videoList = currentPlaylist.first.videoList;
+              Playlist? currentPlaylist = box.get(playlist.name);
+              List<YoutubeVideo> videoList = currentPlaylist!.videoList;
               return ListView.builder(
                   itemCount: videoList.length,
                   itemBuilder: (context, index) => eachVideo(videoList[index])
