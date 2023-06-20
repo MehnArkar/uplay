@@ -22,7 +22,8 @@ class SearchPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(SearchPageController());
+    SearchPageController contoller = Get.put(SearchPageController());
+    contoller.isPined=false;
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       SearchPageController controller = Get.find();
       RenderBox renderBox = controller.cancelBtnKey.currentContext!.findRenderObject() as RenderBox;
@@ -74,7 +75,7 @@ class SearchPage extends StatelessWidget {
                     height: Get.width*0.15,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnails.high??''),fit: BoxFit.cover)
+                      image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnails.high??''),fit: BoxFit.cover),
                     ),
                     child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id && (snapShot.data?.processingState!=ProcessingState.completed)?
                             ClipRRect(
@@ -97,7 +98,8 @@ class SearchPage extends StatelessWidget {
                                   ),
                                   playerController.isLoading?
                                     const AnimatedDot() :
-                                    Lottie.asset('assets/lottie/wave.json',)
+                                    Lottie.asset('assets/lottie/wave.json',),
+
                                 ],
                               ),
                             )

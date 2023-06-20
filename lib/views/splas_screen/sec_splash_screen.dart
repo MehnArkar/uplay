@@ -45,7 +45,7 @@ class _SecondarySplashScreenState extends State<SecondarySplashScreen> with Sing
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SvgPicture.asset(AppConstants.appIcon,width: Get.width*0.2,height:Get.width*0.2,),
-                  const SizedBox(width: 35),
+                  SizedBox(width: Get.height*0.1),
                   const Text('UPlay',style: TextStyle(color: AppColors.primaryColor,fontWeight: FontWeight.w600,fontSize: 25),),
                 ],
               )

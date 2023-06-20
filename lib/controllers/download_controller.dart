@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
@@ -9,6 +10,7 @@ import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/models/playlist.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import '../models/youtube_video.dart';
+import '../utils/log/snap_bar.dart';
 import '../utils/log/super_print.dart';
 import '../views/global_ui/dialog.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -24,7 +26,12 @@ class DownloadController extends GetxController{
   Box<YoutubeVideo> allVideoBox = Hive.box<YoutubeVideo>(AppConstants.boxAllVideos);
   Map<String,YoutubeVideo> downloadingVideo ={};
   Map<String,DownloadTask> downloadingTask = {};
-  bool isLoading = false;
+  bool isPanned = false;
+
+  //For animation
+  double statusBarOpacity = 1;
+  double statusBarHeight = 85;
+  ScrollController scrollController = ScrollController();
 
   @override
   void onInit() {
@@ -32,6 +39,20 @@ class DownloadController extends GetxController{
     super.onInit();
     bindBackgroundIsolate();
     FlutterDownloader.registerCallback(downloadCallback);
+    scrollController.addListener(() {
+      if(scrollController.position.pixels<=statusBarHeight){
+        isPanned = false;
+        statusBarOpacity = 1-(scrollController.position.pixels/statusBarHeight);
+        update();
+      }else{
+          if(!isPanned){
+            isPanned = true;
+            update();
+          }
+      }
+    });
+
+
   }
 
   @override
@@ -82,8 +103,9 @@ class DownloadController extends GetxController{
         ///Remove from variable
         downloadingVideo.remove(currentVideo.id);
 
-
+        showSnackBar('Download complete');
       }
+
       update();
     });
   }
@@ -93,6 +115,7 @@ class DownloadController extends GetxController{
   }
 
    void download(YoutubeVideo video) async{
+      showLoadingDialog();
 
       downloadingVideo.addEntries([MapEntry(video.id, video)]);
       update();
@@ -102,6 +125,7 @@ class DownloadController extends GetxController{
 
       //Save Dir
       Directory dir = await getApplicationDocumentsDirectory();
+      Get.back();
 
      try{
        await FlutterDownloader.enqueue(
@@ -112,32 +136,28 @@ class DownloadController extends GetxController{
            openFileFromNotification: false,
            saveInPublicStorage: false
        );
+       showSnackBar('Your download is start');
      }catch(e){
        superPrint('error in download $e');
        showCustomDialog(title: 'Download fail', contextTitle: 'Something went wrong');
        allVideoBox.delete(video.id);
      }
-
   }
   
   Future<void> getDownloadingTask() async{
-    superPrint('Getting new task');
     downloadingTask.clear();
-    isLoading=true;
-    update();
-
-    await Future.delayed(const Duration(milliseconds: 1000));
-
     List<DownloadTask> allTask =await FlutterDownloader.loadTasks()??[];
     List<DownloadTask> runningTask =  allTask.where((task) => task.status==DownloadTaskStatus.running).toList();
     for (var task in runningTask) {
       downloadingTask.addEntries([MapEntry(task.taskId, task)]);
     }
-
-    isLoading=false;
     update();
   }
 
+  resetData(){
+    isPanned = false;
+    statusBarOpacity = 1;
+  }
 
 
 }

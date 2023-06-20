@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:uplayer/utils/constants/app_color.dart';
 
 showCustomDialog({required String title,required String contextTitle,String submitText='Ok', String cancleText='Cancel',VoidCallback? onClickedSubmit,VoidCallback? onClickCancel,}){
   if(Platform.isIOS){
@@ -92,12 +94,31 @@ showLoadingDialog(){
           height: Get.height,
           color: Colors.black.withOpacity(0.1),
           child: Center(
-            child: Container(
-              padding:const EdgeInsets.all(20),
-              decoration: BoxDecoration(color:Colors.white,borderRadius: BorderRadius.circular(10)),
-              child:const CupertinoActivityIndicator(
-                color: Colors.grey,
-                radius: 12,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: Center(
+                      child: BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 20.0,
+                          sigmaY: 20.0,
+                        ),
+                        child: Container(
+                          color: Colors.white.withOpacity(0.2),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding:const EdgeInsets.all(20),
+                    child:const CupertinoActivityIndicator(
+                      color: AppColors.primaryColor,
+                      radius: 12,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

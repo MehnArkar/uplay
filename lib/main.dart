@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uplayer/services/local_services.dart';
+import 'package:uplayer/utils/constants/app_color.dart';
+import 'package:uplayer/utils/global/global_methods.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/splas_screen/main_splash_screen.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
       navigatorObservers: <NavigatorObserver>[routeObserver],
       theme: ThemeData(
         fontFamily: 'SFPro',
-        primarySwatch: Colors.blue,
+        primarySwatch: createMaterialColor(AppColors.primaryColor),
         textTheme:const TextTheme(
           bodySmall:TextStyle(fontSize: 12,color: Colors.white),
           bodyMedium: TextStyle(fontSize: 14,fontWeight: FontWeight.w600,color: Colors.white),

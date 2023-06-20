@@ -31,7 +31,7 @@ class PlaylistScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         isResizeToAvoidBottomInset: false,
         child: ValueListenableBuilder<Box<Playlist>>(
-            valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
+            valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys:[playlist.name]),
             builder:(context,box,widget) {
               Playlist? currentPlaylist = box.get(playlist.name);
               List<YoutubeVideo> videoList = currentPlaylist!.videoList;

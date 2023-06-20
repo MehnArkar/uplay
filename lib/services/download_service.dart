@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
+import 'package:uplayer/utils/log/snap_bar.dart';
 import 'package:uplayer/views/global_ui/dialog.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 import 'package:permission_handler/permission_handler.dart';
