@@ -60,28 +60,63 @@ class PlaylistScreen extends StatelessWidget {
   }
 
   Widget topPanel(){
-    return Container(
-      width: double.maxFinite,
-      height: Get.height*0.25,
-      decoration: BoxDecoration(
-        color: Colors.black,
-        image: DecorationImage(image: CachedNetworkImageProvider(coverVideo!=null?coverVideo!.thumbnails.high??'':''),fit: BoxFit.cover),
-      ),
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        Container(
+          width: double.maxFinite,
+          height: Get.height*0.25,
+          decoration: BoxDecoration(
+            color: Colors.black,
+            image: DecorationImage(image: CachedNetworkImageProvider(coverVideo!=null?coverVideo!.thumbnails.high??'':''),fit: BoxFit.cover),
+          ),
+        ),
+        Positioned.fill(
+          child: Center(
+            child: BackdropFilter(
+              filter: ImageFilter.blur(
+                sigmaX: 10.0,
+                sigmaY: 10.0,
+              ),
+              child: Container(
+                color: Colors.black.withOpacity(0.25),
+              ),
+            ),
+          ),
+        ),
+        Container(
+          width: double.maxFinite,
+          height: Get.height*0.25,
+          child: Padding(
+            padding: EdgeInsets.only(left: 25,right: 25,top: MediaQuery.of(Get.context!).padding.top+25),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(playlist.name,style:AppConstants.textStyleTitleLarge,),
+                const SizedBox(height: 15,),
+                Text('${playlist.videoList.length} songs',style: AppConstants.textStyleTitleSmall.copyWith(color: Colors.grey),)
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
   Widget bodyWidget(){
-
     return Container(
       width: double.maxFinite,
       height: Get.height-(Get.height*0.25-(Get.width*0.15/2)),
       decoration: BoxDecoration(
           color: AppColors.secondaryColor,
-          borderRadius:  BorderRadius.only(topLeft: Radius.circular(Get.width*0.25/2))
+          borderRadius:  BorderRadius.only(topLeft: Radius.circular(Get.width*0.25/2),topRight:  Radius.circular(Get.width*0.25/2),)
       ),
       child: Column(
         children: [
           controllerPanel(),
+          Expanded(child: videoListPanel())
+
         ],
       ),
 
@@ -90,7 +125,7 @@ class PlaylistScreen extends StatelessWidget {
   
   Widget controllerPanel(){
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
       child: Row(
         children: [
             Container(
@@ -100,7 +135,7 @@ class PlaylistScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: AppColors.primaryColor
               ),
-              child: Icon(Iconsax.play5,color: Colors.white,),
+              child:const Icon(Iconsax.play5,color: Colors.white,),
             )
         ],
       ),
@@ -184,6 +219,21 @@ class PlaylistScreen extends StatelessWidget {
             );
           }
       ),
+    );
+  }
+
+  Widget videoListPanel(){
+    return ValueListenableBuilder<Box<Playlist>>(
+            valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys:[playlist.name]),
+            builder:(context,box,widget) {
+              Playlist? currentPlaylist = box.get(playlist.name);
+              List<YoutubeVideo> videoList = currentPlaylist!.videoList;
+              return ListView.builder(
+                padding: EdgeInsets.zero,
+                  itemCount: videoList.length,
+                  itemBuilder: (context, index) => eachVideo(videoList[index])
+              );
+            }
     );
   }
 
