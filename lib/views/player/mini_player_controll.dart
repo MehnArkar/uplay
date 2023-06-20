@@ -9,7 +9,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
 import 'package:uplayer/views/player/player_controller_page.dart';
-
 import '../../utils/constants/app_constant.dart';
 
 class MiniPlayerControll extends StatelessWidget {

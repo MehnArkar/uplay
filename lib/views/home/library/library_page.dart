@@ -54,7 +54,7 @@ class PlaylistPage extends StatelessWidget {
     }
     return GestureDetector(
       onTap: (){
-        Get.to(PlaylistScreen(playlist: playlist));
+        Get.to(PlaylistScreen(playlist: playlist,coverVideo: coverVideo,));
       },
       onLongPress:(){
         Get.find<LibraryController>().deletePlaylist(playlist.name);
