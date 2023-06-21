@@ -84,59 +84,151 @@ class PlaylistScreen extends StatelessWidget {
             ),
           ),
         ),
-        Container(
-          width: double.maxFinite,
-          height: Get.height*0.25,
-          child: Padding(
-            padding: EdgeInsets.only(left: 25,right: 25,top: MediaQuery.of(Get.context!).padding.top+25),
+        Positioned(
+            left: 25,
+            right: 25,
+            top: MediaQuery.of(Get.context!).padding.top,
             child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(playlist.name,style:AppConstants.textStyleTitleLarge,),
-                const SizedBox(height: 15,),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: (){
+                        Get.back();
+                      },
+                      child: Container(
+                        padding:const EdgeInsets.all(8),
+                        alignment: Alignment.center,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withOpacity(0.2)
+                        ),
+                        child:const Icon(Icons.arrow_back_ios_new_rounded,size: 20,color: Colors.white,),
+                      ),
+                    ),
+                    Expanded(child: Center(child: Text(playlist.name,style:AppConstants.textStyleTitleMedium,)),),
+                    Container(
+                      padding:const EdgeInsets.all(8),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.black.withOpacity(0.2)
+                      ),
+                      child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10,),
                 Text('${playlist.videoList.length} songs',style: AppConstants.textStyleTitleSmall.copyWith(color: Colors.grey),)
               ],
-            ),
-          ),
-        ),
+            )
+        )
       ],
     );
   }
 
   Widget bodyWidget(){
-    return Container(
-      width: double.maxFinite,
-      height: Get.height-(Get.height*0.25-(Get.width*0.15/2)),
-      decoration: BoxDecoration(
-          color: AppColors.secondaryColor,
-          borderRadius:  BorderRadius.only(topLeft: Radius.circular(Get.width*0.25/2),topRight:  Radius.circular(Get.width*0.25/2),)
-      ),
-      child: Column(
-        children: [
-          controllerPanel(),
-          Expanded(child: videoListPanel())
+    return Stack(
+      alignment: Alignment.topCenter,
+      children: [
+        SizedBox(
+          width: Get.width,
+          height: Get.height,
+          child: Column(
+            children: [
+              const Spacer(),
+              Container(
+                width: double.maxFinite,
+                height: Get.height-(Get.height*0.25-(Get.width*0.15/2)),
+                decoration: BoxDecoration(
+                    color: AppColors.secondaryColor,
+                    borderRadius:  BorderRadius.only(topLeft: Radius.circular(Get.width*0.25/2),topRight:  Radius.circular(Get.width*0.25/2),)
+                ),
+                child: Column(
+                  children: [
+                    controllerPanel(),
+                    Expanded(child: videoListPanel())
 
-        ],
-      ),
+                  ],
+                ),
 
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+            top: Get.height*0.25-(Get.width*0.15),
+            child: GestureDetector(
+              onTap: (){
+                Get.find<PlayerController>().playPlaylist(playlist.videoList);
+              },
+              child: Container(
+                width: Get.width*0.15,
+                height: Get.width*0.15,
+                decoration:const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColors.primaryColor
+                ),
+                child:const Icon(Iconsax.play5,color: Colors.white,),
+              ),
+            ))
+      ],
     );
   }
   
   Widget controllerPanel(){
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
+      padding:const  EdgeInsets.only(left: 25,right: 25,top: 25,bottom: 25),
       child: Row(
         children: [
-            Container(
-              width: Get.width*0.15,
-              height: Get.width*0.15,
-              decoration:const BoxDecoration(
-                shape: BoxShape.circle,
-                color: AppColors.primaryColor
-              ),
-              child:const Icon(Iconsax.play5,color: Colors.white,),
-            )
+          Expanded(
+              child: GestureDetector(
+                onTap: (){},
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                    borderRadius: BorderRadius.circular(100),
+                    border: Border.all(color: Colors.white)
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Iconsax.shuffle,color: Colors.white,),
+                      const SizedBox(width: 10,),
+                      Text('Shuffle',style: AppConstants.textStyleMedium,),
+                    ],
+                  ),
+                ),
+              )
+          ),
+          SizedBox(width: Get.width*0.15+30,),
+          Expanded(
+              child: GestureDetector(
+                onTap: (){
+
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.transparent,
+                      borderRadius: BorderRadius.circular(100),
+                      border: Border.all(color: Colors.white)
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Iconsax.add,color: Colors.white,),
+                      const SizedBox(width: 5,),
+                      Text('Add Song',style: AppConstants.textStyleMedium,),
+                    ],
+                  ),
+                ),
+              )
+          ),
         ],
       ),
     );

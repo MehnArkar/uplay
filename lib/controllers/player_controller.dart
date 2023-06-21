@@ -28,6 +28,7 @@ class PlayerController extends GetxController{
 
 
 
+
   play(YoutubeVideo video,{bool isNetwork = true}) async {
     currentVideo = video;
     //Stop player if playing another
@@ -67,6 +68,41 @@ class PlayerController extends GetxController{
       );
       await player.setAudioSource(source);
     }
+
+    //Loading finish
+    isLoading= false;
+    update();
+
+    //Play
+    player.play();
+  }
+
+  playPlaylist(List<YoutubeVideo> videoList) async{
+
+    if(player.playing){
+      player.stop();
+    }
+
+    //Update data
+    isLoading = true;
+    update();
+
+      Directory dir = await getApplicationDocumentsDirectory();
+
+      AudioSource source = ConcatenatingAudioSource(
+        // Start loading next item just before reaching it
+        useLazyPreparation: true,
+        // Customise the shuffle algorithm
+        shuffleOrder: DefaultShuffleOrder(),
+        // Specify the playlist items
+        children: List.generate(videoList.length, (index) {
+          YoutubeVideo currentVideo = videoList[index];
+          return AudioSource.asset('${dir.path}/${currentVideo.id}.mp3');
+        })
+      );
+
+      await player.setAudioSource(source);
+
 
     //Loading finish
     isLoading= false;
