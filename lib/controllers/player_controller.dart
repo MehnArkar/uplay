@@ -15,8 +15,8 @@ class PlayerController extends GetxController{
     super.onInit();
     player.processingStateStream.listen((state) {
       if(state==ProcessingState.completed){
-        currentVideo=null;
-        update();
+        // currentVideo=null;
+        // update();
       }
     });
   }
@@ -41,6 +41,7 @@ class PlayerController extends GetxController{
     update();
     if(isNetwork) {
       String audioUrl = await getUrl(video);
+      superPrint(audioUrl);
 
       AudioSource source = AudioSource.uri(
         Uri.parse(audioUrl.toString()),
@@ -113,15 +114,18 @@ class PlayerController extends GetxController{
   }
 
   Future<String> getUrl(YoutubeVideo video) async{
+
     final manifest = await youtubeExplode.videos.streamsClient.getManifest(video.id);
     final audioStreamInfo = manifest.audioOnly.sortByBitrate();
+
     String audioUrl = '';
-
+    audioUrl = audioStreamInfo.first.url.toString();
     if (Platform.isIOS) {
-      final List<AudioOnlyStreamInfo> m4aStreams = audioStreamInfo.where((element) => element.audioCodec.contains('mp4')).toList();
-
+      final List<AudioStreamInfo> m4aStreams = audioStreamInfo.where((element) {
+        superPrint(element);
+        return element.audioCodec.contains('mp4');}).toList();
       if (m4aStreams.isNotEmpty) {
-        audioUrl = m4aStreams.first.url.toString();
+        audioUrl = m4aStreams.last.url.toString();
       }
     }else{
       audioUrl = audioStreamInfo.first.url.toString();
