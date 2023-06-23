@@ -110,10 +110,7 @@ class MiniPlayerControll extends StatelessWidget {
                     sigmaX: 1.0,
                     sigmaY: 1.0,
                   ),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.25),
-                    child: AnimatedDot()
-                  ),
+                  child: const AnimatedDot(),
                 ),
               ),
             ),

@@ -53,7 +53,7 @@ class PlayerController extends GetxController{
         ),
       );
       await player.setAudioSource(source);
-    }else {
+    }else{
       Directory dir = await getApplicationDocumentsDirectory();
       String audioUrl ='${dir.path}/${video.id}.mp3';
       superPrint(audioUrl);
@@ -125,7 +125,7 @@ class PlayerController extends GetxController{
         superPrint(element);
         return element.audioCodec.contains('mp4');}).toList();
       if (m4aStreams.isNotEmpty) {
-        audioUrl = m4aStreams.last.url.toString();
+        audioUrl = m4aStreams.first.url.toString();
       }
     }else{
       audioUrl = audioStreamInfo.first.url.toString();

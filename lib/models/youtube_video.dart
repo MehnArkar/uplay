@@ -21,7 +21,6 @@ class YoutubeVideo{
   String channelTitle;
   @HiveField(7)
   bool isNetwork;
-
   YoutubeVideo({required this.id,required this.title,required this.description,required this.thumbnails,required this.url,required this.channelId,required this.channelTitle,this.isNetwork=false});
 
   factory YoutubeVideo.fromJson(Map<String,dynamic> json){
@@ -34,7 +33,7 @@ class YoutubeVideo{
         thumbnails: Thumbnails.fromJson(json['snippet']['thumbnails']),
         url: url,
         channelId: json['id']['channelId']??'',
-        channelTitle: json['snippet']['channelTitle']);
+        channelTitle: json['snippet']['channelTitle'],);
   }
 }
 

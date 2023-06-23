@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -110,8 +111,16 @@ class PlaylistPage extends StatelessWidget {
             bottom: 0,
             right: 25,
             child: IconButton(
-                onPressed: (){
-                  showCreatePlaylistDialog();
+                onPressed: () async{
+                  // showCreatePlaylistDialog();
+                 List<DownloadTask>? list = await FlutterDownloader.loadTasks();
+                 if(list != null){
+                   list.forEach((element) {
+                     if(element.status == DownloadTaskStatus.complete) {
+                       print(element.filename);
+                     }
+                   });
+                 }
                 },
                 icon: const Icon(Iconsax.add_circle,color: Colors.grey,)))
       ],

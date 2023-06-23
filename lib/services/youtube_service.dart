@@ -2,9 +2,6 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:uplayer/models/youtube_video.dart';
-import 'package:uplayer/services/api_services.dart';
-import 'package:uplayer/utils/log/super_print.dart';
-import 'package:uplayer/views/global_ui/dialog.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 String nextPageToken = '';
@@ -54,7 +51,8 @@ class YoutubeServices{
           thumbnails: Thumbnails(normal: eachVideoSearch.thumbnails.standardResUrl, medium: eachVideoSearch.thumbnails.mediumResUrl, high: eachVideoSearch.thumbnails.maxResUrl),
           url: eachVideoSearch.url,
           channelId: eachVideoSearch.channelId.toString(),
-          channelTitle: eachVideoSearch.author);
+          channelTitle: eachVideoSearch.author,
+      );
       result.add(video);
     }
 
