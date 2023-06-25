@@ -20,7 +20,7 @@ class MiniPlayerControll extends StatelessWidget {
       builder:(controller)=> StreamBuilder<PlayerState>(
         stream: controller.player.playerStateStream,
         builder:(context,snapshot){
-          PlayerState playerState = snapshot.data as PlayerState;
+          PlayerState playerState =snapshot.data!=null? snapshot.data as PlayerState:PlayerState(false, ProcessingState.idle);
           // return playerState.processingState==ProcessingState.ready || playerState.processingState==ProcessingState.buffering?
           return controller.currentVideo!=null?
           ClipRRect(

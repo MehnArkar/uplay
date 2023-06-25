@@ -21,11 +21,19 @@ class PlayerController extends GetxController{
       }
     });
 
-    player.icyMetadataStream.listen((currentMetaData) {
-      if(currentMetaData!=null){
-        superPrint(currentMetaData.info?.title);
+    player.sequenceStateStream.listen((data) {
+      if(data?.currentSource!=null){
+        MediaItem? item = data?.currentSource?.tag as MediaItem;
       }
     });
+
+  }
+
+  @override
+  void onClose() {
+    // TODO: implement onClose
+    super.onClose();
+    player.dispose();
   }
 
   AudioPlayer player = AudioPlayer();
@@ -84,6 +92,7 @@ class PlayerController extends GetxController{
 
     //Play
     player.play();
+
   }
 
   playPlaylist(List<YoutubeVideo> videoList,{bool isShuffle=false}) async{
@@ -100,8 +109,8 @@ class PlayerController extends GetxController{
         '${dir.path}/${currentVideo.id}.mp3',
         tag: MediaItem(
           id: currentVideo.id??'0',
-          album: '',
           title: currentVideo.title,
+          artist: currentVideo.channelTitle,
           artUri: Uri.parse(currentVideo.thumbnails.high??''),
         ),
       );
@@ -134,7 +143,6 @@ class PlayerController extends GetxController{
     audioUrl = audioStreamInfo.first.url.toString();
     if (Platform.isIOS) {
       final List<AudioStreamInfo> m4aStreams = audioStreamInfo.where((element) {
-        superPrint(element);
         return element.audioCodec.contains('mp4');}).toList();
       if (m4aStreams.isNotEmpty) {
         audioUrl = m4aStreams.first.url.toString();
