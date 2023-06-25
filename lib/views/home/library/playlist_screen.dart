@@ -60,71 +60,73 @@ class PlaylistScreen extends StatelessWidget {
   }
 
   Widget topPanel(){
-    return Stack(
-      alignment: Alignment.topCenter,
-      children: [
-        Container(
-          width: double.maxFinite,
-          height: Get.height*0.25,
-          decoration: BoxDecoration(
-            color: Colors.black,
-            image: DecorationImage(image: CachedNetworkImageProvider(coverVideo!=null?coverVideo!.thumbnails.high??'':''),fit: BoxFit.cover),
+    return ClipRRect(
+      child: Stack(
+        alignment: Alignment.topCenter,
+        children: [
+          Container(
+            width: double.maxFinite,
+            height: Get.height*0.25,
+            decoration: BoxDecoration(
+              color: Colors.black,
+              image: DecorationImage(image: CachedNetworkImageProvider(coverVideo!=null?coverVideo!.thumbnails.high??'':''),fit: BoxFit.cover),
+            ),
           ),
-        ),
-        Positioned.fill(
-          child: Center(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 10.0,
-                sigmaY: 10.0,
-              ),
-              child: Container(
-                color: Colors.black.withOpacity(0.25),
+          Positioned.fill(
+            child: Center(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(
+                  sigmaX: 10.0,
+                  sigmaY: 10.0,
+                ),
+                child: Container(
+                  color: Colors.black.withOpacity(0.25),
+                ),
               ),
             ),
           ),
-        ),
-        Positioned(
-            left: 25,
-            right: 25,
-            top: MediaQuery.of(Get.context!).padding.top,
-            child: Column(
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    GestureDetector(
-                      onTap: (){
-                        Get.back();
-                      },
-                      child: Container(
+          Positioned(
+              left: 25,
+              right: 25,
+              top: MediaQuery.of(Get.context!).padding.top,
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      GestureDetector(
+                        onTap: (){
+                          Get.back();
+                        },
+                        child: Container(
+                          padding:const EdgeInsets.all(8),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black.withOpacity(0.2)
+                          ),
+                          child:const Icon(Icons.arrow_back_ios_new_rounded,size: 20,color: Colors.white,),
+                        ),
+                      ),
+                      Expanded(child: Center(child: Text(playlist.name,style:AppConstants.textStyleTitleMedium,)),),
+                      Container(
                         padding:const EdgeInsets.all(8),
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(0.2)
+                            shape: BoxShape.circle,
+                            color: Colors.black.withOpacity(0.2)
                         ),
-                        child:const Icon(Icons.arrow_back_ios_new_rounded,size: 20,color: Colors.white,),
+                        child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
                       ),
-                    ),
-                    Expanded(child: Center(child: Text(playlist.name,style:AppConstants.textStyleTitleMedium,)),),
-                    Container(
-                      padding:const EdgeInsets.all(8),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black.withOpacity(0.2)
-                      ),
-                      child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10,),
-                Text('${playlist.videoList.length} songs',style: AppConstants.textStyleTitleSmall.copyWith(color: Colors.grey),)
-              ],
-            )
-        )
-      ],
+                    ],
+                  ),
+                  const SizedBox(height: 10,),
+                  Text('${playlist.videoList.length} songs',style: AppConstants.textStyleTitleSmall.copyWith(color: Colors.grey),)
+                ],
+              )
+          )
+        ],
+      ),
     );
   }
 

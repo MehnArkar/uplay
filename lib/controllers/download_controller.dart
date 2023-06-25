@@ -91,7 +91,7 @@ class DownloadController extends GetxController{
 
       if(status==DownloadTaskStatus.complete) {
         ///If download complete remove form downloading and add to local
-        await Future.delayed(Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 100));
         List<DownloadTask>? taskList = await FlutterDownloader.loadTasksWithRawQuery(query: "SELECT * FROM task WHERE task_id='$id'");
         YoutubeVideo currentVideo = downloadingVideo[taskList?.first.filename?.replaceFirst('.mp3','')]!;
         ///Added to all Songs box

@@ -5,6 +5,7 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/log/super_print.dart';
+import 'package:uplayer/views/global_ui/dialog.dart';
 import 'package:youtube_explode_dart/youtube_explode_dart.dart';
 
 
@@ -19,11 +20,18 @@ class PlayerController extends GetxController{
         // update();
       }
     });
+
+    player.icyMetadataStream.listen((currentMetaData) {
+      if(currentMetaData!=null){
+        superPrint(currentMetaData.info?.title);
+      }
+    });
   }
 
   AudioPlayer player = AudioPlayer();
   final youtubeExplode = YoutubeExplode();
   YoutubeVideo? currentVideo;
+  List<YoutubeVideo> playlistVideo = [];
   bool isLoading = false;
 
 
@@ -47,8 +55,8 @@ class PlayerController extends GetxController{
         Uri.parse(audioUrl.toString()),
         tag: MediaItem(
           id: video.id ?? '0',
-          album: '',
           title: video.title,
+          artist: video.channelTitle,
           artUri: Uri.parse(video.thumbnails.high ?? ''),
         ),
       );
@@ -62,8 +70,8 @@ class PlayerController extends GetxController{
           audioUrl,
           tag: MediaItem(
             id: video.id??'0',
-            album: '',
             title: video.title,
+            artist: video.channelTitle,
             artUri: Uri.parse(video.thumbnails.high??''),
           ),
       );
@@ -78,40 +86,44 @@ class PlayerController extends GetxController{
     player.play();
   }
 
-  playPlaylist(List<YoutubeVideo> videoList) async{
-
+  playPlaylist(List<YoutubeVideo> videoList,{bool isShuffle=false}) async{
     if(player.playing){
       player.stop();
     }
 
-    //Update data
-    isLoading = true;
-    update();
+    showLoadingDialog();
 
-      Directory dir = await getApplicationDocumentsDirectory();
-
-      AudioSource source = ConcatenatingAudioSource(
-        // Start loading next item just before reaching it
-        useLazyPreparation: true,
-        // Customise the shuffle algorithm
-        shuffleOrder: DefaultShuffleOrder(),
-        // Specify the playlist items
-        children: List.generate(videoList.length, (index) {
-          YoutubeVideo currentVideo = videoList[index];
-          return AudioSource.asset('${dir.path}/${currentVideo.id}.mp3');
-        })
+    Directory dir = await getApplicationDocumentsDirectory();
+    List<AudioSource> audioSourceList = List.generate(videoList.length, (index) {
+      YoutubeVideo currentVideo = videoList[index];
+      return AudioSource.asset(
+        '${dir.path}/${currentVideo.id}.mp3',
+        tag: MediaItem(
+          id: currentVideo.id??'0',
+          album: '',
+          title: currentVideo.title,
+          artUri: Uri.parse(currentVideo.thumbnails.high??''),
+        ),
       );
+    });
 
-      await player.setAudioSource(source);
+    AudioSource source = ConcatenatingAudioSource(
+        useLazyPreparation: true,
+        shuffleOrder: DefaultShuffleOrder(),
+        children: audioSourceList
+    );
+    await player.setAudioSource(source,);
+
+    if(isShuffle){
+      player.shuffle();
+    }
 
 
-    //Loading finish
-    isLoading= false;
-    update();
-
-    //Play
+    Get.back();
     player.play();
+
   }
+
 
   Future<String> getUrl(YoutubeVideo video) async{
 
