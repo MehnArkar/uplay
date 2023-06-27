@@ -99,7 +99,7 @@ class DownloadController extends GetxController{
 
         ///Add to library box
         LibraryController libraryController = Get.find();
-        libraryController.addNewToPlaylist('Saved Songs', currentVideo);
+        libraryController.addNewToPlaylist('Saved Songs', [currentVideo]);
 
         ///Remove from variable
         downloadingVideo.remove(currentVideo.id);

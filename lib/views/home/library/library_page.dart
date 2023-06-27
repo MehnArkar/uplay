@@ -111,16 +111,8 @@ class PlaylistPage extends StatelessWidget {
             bottom: 0,
             right: 25,
             child: IconButton(
-                onPressed: () async{
-                  // showCreatePlaylistDialog();
-                 List<DownloadTask>? list = await FlutterDownloader.loadTasks();
-                 if(list != null){
-                   list.forEach((element) {
-                     if(element.status == DownloadTaskStatus.complete) {
-                       print(element.filename);
-                     }
-                   });
-                 }
+                onPressed: () {
+                  showCreatePlaylistDialog();
                 },
                 icon: const Icon(Iconsax.add_circle,color: Colors.grey,)))
       ],
@@ -187,47 +179,6 @@ class PlaylistPage extends StatelessWidget {
         });
   }
 
-  showCreatePlaylistSheet(){
-      showModalBottomSheet(
-          context: Get.context!,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          shape:const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
-          ),
-          builder: (ctx){
-            return SizedBox(
-              width: Get.width,
-              height: Get.height*0.85,
-              child: Container(
-                padding:const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
-                decoration:const BoxDecoration(
-                  color: AppColors.secondaryColor,
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Create Playlist',style: AppConstants.textStyleTitleMedium,),
-                    const SizedBox(height: 15,),
-                    TextField(
-                      decoration: InputDecoration(
-                        contentPadding:const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                        hintText: 'Search',
-                        hintStyle: AppConstants.textStyleMedium.copyWith(color: Colors.grey,fontWeight: FontWeight.normal),
-                        fillColor: AppColors.colorTextField,
-                          filled: true,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
-                        focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
-                        enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
 
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            );
-          });
-  }
 
 }

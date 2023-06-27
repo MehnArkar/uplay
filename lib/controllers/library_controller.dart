@@ -9,14 +9,16 @@ import '../models/playlist.dart';
 
 class LibraryController extends GetxController{
 
-  addNewToPlaylist(String playlistKey,YoutubeVideo video){
+  List<YoutubeVideo> selectedVideos = [];
+
+  addNewToPlaylist(String playlistKey,List<YoutubeVideo> video){
     Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
     if(libraryBox.containsKey(playlistKey)){
         Playlist playlist = libraryBox.get(playlistKey)!;
-        playlist.videoList.add(video);
+        playlist.videoList.addAll(video);
         libraryBox.put(playlistKey, playlist);
     }else{
-      libraryBox.put(playlistKey, Playlist(name: playlistKey, videoList: [video]));
+      libraryBox.put(playlistKey, Playlist(name: playlistKey, videoList: video));
     }
   }
 

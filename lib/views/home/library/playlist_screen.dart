@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:ui';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -10,8 +9,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
+import 'package:uplayer/controllers/library_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/utils/log/snap_bar.dart';
 import 'package:uplayer/utils/log/super_print.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/player/player_controller_page.dart';
@@ -111,15 +112,45 @@ class PlaylistScreen extends StatelessWidget {
                         ),
                       ),
                       Expanded(child: Center(child: Text(playlist.name,style:AppConstants.textStyleTitleMedium,)),),
-                      Container(
-                        padding:const EdgeInsets.all(8),
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black.withOpacity(0.2)
+                      PopupMenuButton(
+                        color: AppColors.secondaryColor,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        child: Container(
+                          padding:const EdgeInsets.all(8),
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black.withOpacity(0.2)
+                          ),
+                          child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
                         ),
-                        child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
-                      ),
+                          itemBuilder: (context){
+                            return [
+                              PopupMenuItem(
+                                  onTap: (){
+                                    Get.back();
+                                    Get.find<LibraryController>().deletePlaylist(playlist.name);
+                                    showSnackBar('${playlist.name} deleted!');
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Iconsax.trash,color: Colors.red,size: 20,),
+                                      const SizedBox(width: 10,),
+                                      Text('Delete',style: AppConstants.textStyleMedium.copyWith(color: Colors.red),),
+                                    ],
+                                  ))
+                            ];
+                          })
+                      // Container(
+                      //   padding:const EdgeInsets.all(8),
+                      //   alignment: Alignment.center,
+                      //   decoration: BoxDecoration(
+                      //       shape: BoxShape.circle,
+                      //       color: Colors.black.withOpacity(0.2)
+                      //   ),
+                      //   child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
+                      // ),
                     ],
                   ),
                   const SizedBox(height: 10,),
@@ -222,7 +253,7 @@ class PlaylistScreen extends StatelessWidget {
           Expanded(
               child: GestureDetector(
                 onTap: (){
-
+                    showAddSongSheet();
                 },
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -258,7 +289,7 @@ class PlaylistScreen extends StatelessWidget {
                 if(playerController.currentVideo?.id!=video.id) {
                   playerController.play(video, isNetwork: false);
                 }else{
-                  Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 1000));
+                  Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 800));
                 }
               },
               child: Container(
@@ -345,6 +376,81 @@ class PlaylistScreen extends StatelessWidget {
               );
             }
     );
+  }
+
+  showAddSongSheet(){
+    TextEditingController txtSearch = TextEditingController();
+    showModalBottomSheet(
+        context: Get.context!,
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+        shape:const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
+        ),
+        builder: (ctx){
+          return SizedBox(
+              width: Get.width,
+              height: Get.height*0.85,
+              child: GetBuilder<LibraryController>(
+                builder:(libraryController)=> Container(
+                  padding:const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
+                  decoration:const BoxDecoration(
+                      color: AppColors.secondaryColor,
+                      borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Add new',style: AppConstants.textStyleTitleMedium,),
+                      const SizedBox(height: 15,),
+                      TextField(
+                        controller: txtSearch,
+                        decoration: InputDecoration(
+                          contentPadding:const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                          hintText: 'Search',
+                          hintStyle: AppConstants.textStyleMedium.copyWith(color: Colors.grey,fontWeight: FontWeight.normal),
+                          fillColor: AppColors.colorTextField,
+                          filled: true,
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
+                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
+                        ),
+                      ),
+                      const SizedBox(height: 15,),
+                      Expanded(
+                          child:ValueListenableBuilder<Box<YoutubeVideo>>(
+                              valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxAllVideos).listenable(),
+                              builder: (context,box,widget){
+                                return ListView.builder(
+                                    itemCount: box.length,
+                                    itemBuilder: (context,index){
+                                      YoutubeVideo currentVideo = box.getAt(index)!;
+                                      return ListTile(
+                                        onTap: (){
+                                          libraryController.selectedVideos.add(currentVideo);
+                                          libraryController.update();
+                                        },
+                                        leading: Container(
+                                          width: Get.width*0.15,
+                                          height: Get.width*0.15,
+                                          decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(15),
+                                              image: DecorationImage(image: CachedNetworkImageProvider(currentVideo.thumbnails.high??''),fit: BoxFit.cover)
+                                          ),
+                                        ),
+                                        title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: libraryController.selectedVideos.contains(currentVideo)?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                                        subtitle: Text(currentVideo.channelTitle,style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),),
+                                        trailing: Icon(Icons.check,color:libraryController.selectedVideos.contains(currentVideo)? AppColors.primaryColor:Colors.transparent,)
+                                      );
+                                    });
+                              })
+                      )
+                    ],
+                  ),
+            ),
+              ),
+          );
+        });
   }
 
 }
