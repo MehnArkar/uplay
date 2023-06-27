@@ -113,9 +113,8 @@ showLoadingDialog(){
                   ),
                   Container(
                     padding:const EdgeInsets.all(20),
-                    child:const CupertinoActivityIndicator(
+                    child:const CircularProgressIndicator(
                       color: AppColors.primaryColor,
-                      radius: 12,
                     ),
                   ),
                 ],

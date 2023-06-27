@@ -15,6 +15,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lottie/lottie.dart';
 import 'package:marquee/marquee.dart';
 import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
+import 'package:uplayer/views/player/player_controller_page.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -62,7 +63,11 @@ class SearchPage extends StatelessWidget {
         builder: (context,snapShot) {
           return GestureDetector(
             onTap: (){
-              playerController.play(video);
+              if(playerController.currentVideo?.id!=video.id) {
+                playerController.play(video);
+              }else{
+                Get.to(const PlayerControllerPage());
+              }
             },
             child: Container(
               padding:const EdgeInsets.symmetric(horizontal: 25),

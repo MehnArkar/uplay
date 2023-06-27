@@ -13,6 +13,7 @@ import 'package:lottie/lottie.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
+import 'package:uplayer/views/player/player_controller_page.dart';
 
 import '../../../controllers/download_controller.dart';
 import '../../../controllers/player_controller.dart';
@@ -243,7 +244,11 @@ class PlaylistScreen extends StatelessWidget {
           builder: (context,snapShot) {
             return GestureDetector(
               onTap: (){
-                playerController.play(video,isNetwork: false);
+                if(playerController.currentVideo?.id!=video.id) {
+                  playerController.play(video, isNetwork: false);
+                }else{
+                  Get.to(const PlayerControllerPage());
+                }
               },
               child: Container(
                 padding:const EdgeInsets.symmetric(horizontal: 25),

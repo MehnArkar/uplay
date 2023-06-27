@@ -24,6 +24,8 @@ class PlayerController extends GetxController{
     player.sequenceStateStream.listen((data) {
       if(data?.currentSource!=null){
         MediaItem? item = data?.currentSource?.tag as MediaItem;
+        currentVideo = YoutubeVideo(id: item.id, title: item.title, description: '', thumbnails: Thumbnails(normal: item.artUri.toString(), medium: item.artUri.toString(), high: item.artUri.toString()), url: '', channelId: '', channelTitle: item.artist??'');
+        update();
       }
     });
 
@@ -46,12 +48,6 @@ class PlayerController extends GetxController{
 
 
   play(YoutubeVideo video,{bool isNetwork = true}) async {
-    currentVideo = video;
-    //Stop player if playing another
-    if(player.playing){
-      player.stop();
-    }
-
     //Update data
     isLoading = true;
     update();
@@ -96,9 +92,6 @@ class PlayerController extends GetxController{
   }
 
   playPlaylist(List<YoutubeVideo> videoList,{bool isShuffle=false}) async{
-    if(player.playing){
-      player.stop();
-    }
 
     showLoadingDialog();
 

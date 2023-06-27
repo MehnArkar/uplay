@@ -194,7 +194,7 @@ class PlayerControllerPage extends StatelessWidget {
               IconButton(
                   onPressed: playerController.player.hasPrevious?
                   (){
-                    playerController.seek(true);
+                    playerController.player.seekToPrevious();
                   }:null,
                   color: Colors.white,
                   disabledColor: Colors.grey,
@@ -212,7 +212,7 @@ class PlayerControllerPage extends StatelessWidget {
               IconButton(
                   onPressed: playerController.player.hasNext?
                       (){
-                    playerController.seek(false);
+                    playerController.player.seekToNext();
                   }:null,
                   color: Colors.white,
                   disabledColor: Colors.grey,
