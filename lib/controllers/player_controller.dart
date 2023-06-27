@@ -111,15 +111,15 @@ class PlayerController extends GetxController{
 
     AudioSource source = ConcatenatingAudioSource(
         useLazyPreparation: true,
-        shuffleOrder: DefaultShuffleOrder(),
+        shuffleOrder:DefaultShuffleOrder(),
         children: audioSourceList
     );
+
     await player.setAudioSource(source,);
 
-    if(isShuffle){
-      player.shuffle();
-    }
-
+    // if(isShuffle){
+    //   player.setShuffleModeEnabled(true);
+    // }
 
     Get.back();
     player.play();

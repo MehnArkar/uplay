@@ -7,6 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:uplayer/models/position_data.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/utils/log/super_print.dart';
 import '../../controllers/player_controller.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import '../../utils/constants/app_color.dart';
@@ -174,6 +175,11 @@ class PlayerControllerPage extends StatelessWidget {
               timeLabelTextStyle: AppConstants.textStyleSmall.copyWith(color: Colors.grey),
               onSeek: (duration){
                 controller.player.seek(duration);
+                // if(!controller.player.hasNext && !controller.player.hasPrevious){
+                //   controller.player.seek(duration);
+                // }else {
+                //   controller.player.seek(duration, index: controller.player.currentIndex);
+                // }
               },
           );
         }

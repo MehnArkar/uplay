@@ -12,6 +12,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:lottie/lottie.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/utils/log/super_print.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/player/player_controller_page.dart';
 
@@ -181,29 +182,39 @@ class PlaylistScreen extends StatelessWidget {
   }
   
   Widget controllerPanel(){
+    PlayerController playerController = Get.find();
     return Padding(
       padding:const  EdgeInsets.only(left: 25,right: 25,top: 25,bottom: 25),
       child: Row(
         children: [
           Expanded(
               child: GestureDetector(
-                onTap: (){},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                    borderRadius: BorderRadius.circular(100),
-                    border: Border.all(color: Colors.white)
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Iconsax.shuffle,color: Colors.white,),
-                      const SizedBox(width: 10,),
-                      Text('Shuffle',style: AppConstants.textStyleMedium,),
-                    ],
-                  ),
+                onTap: (){
+                  bool isShuffle = playerController.player.shuffleModeEnabled;
+                  playerController.player.setShuffleModeEnabled(isShuffle?false:true);
+                },
+                child: StreamBuilder<bool>(
+                  stream: playerController.player.shuffleModeEnabledStream,
+                  builder: (context,shapShot) {
+                    bool isShuffel = shapShot.data??false;
+                    return Container(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: isShuffel?AppColors.primaryColor:Colors.transparent,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color:isShuffel?AppColors.primaryColor: Colors.white)
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Iconsax.shuffle,color: Colors.white,),
+                          const SizedBox(width: 10,),
+                          Text('Shuffle',style: AppConstants.textStyleMedium,),
+                        ],
+                      ),
+                    );
+                  }
                 ),
               )
           ),
@@ -247,7 +258,7 @@ class PlaylistScreen extends StatelessWidget {
                 if(playerController.currentVideo?.id!=video.id) {
                   playerController.play(video, isNetwork: false);
                 }else{
-                  Get.to(const PlayerControllerPage());
+                  Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 1000));
                 }
               },
               child: Container(
