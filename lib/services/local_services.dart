@@ -15,7 +15,6 @@ class LocalService{
   ///Open initial hive box
   static Future<void> openInitialBox() async{
     await Hive.openBox<UserData>(AppConstants.boxUserData);
-    await Hive.openBox<YoutubeVideo>(AppConstants.boxAllVideos);
     await Hive.openBox<Playlist>(AppConstants.boxLibrary);
   }
 }

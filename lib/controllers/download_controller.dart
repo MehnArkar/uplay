@@ -23,7 +23,7 @@ void downloadCallback(String id, int status, int progress) {
 
 
 class DownloadController extends GetxController{
-  Box<YoutubeVideo> allVideoBox = Hive.box<YoutubeVideo>(AppConstants.boxAllVideos);
+
   Map<String,YoutubeVideo> downloadingVideo ={};
   Map<String,DownloadTask> downloadingTask = {};
   bool isPanned = false;
@@ -94,8 +94,6 @@ class DownloadController extends GetxController{
         await Future.delayed(const Duration(milliseconds: 100));
         List<DownloadTask>? taskList = await FlutterDownloader.loadTasksWithRawQuery(query: "SELECT * FROM task WHERE task_id='$id'");
         YoutubeVideo currentVideo = downloadingVideo[taskList?.first.filename?.replaceFirst('.mp3','')]!;
-        ///Added to all Songs box
-        await allVideoBox.put(currentVideo.id,currentVideo);
 
         ///Add to library box
         LibraryController libraryController = Get.find();
@@ -141,7 +139,6 @@ class DownloadController extends GetxController{
      }catch(e){
        superPrint('error in download $e');
        showCustomDialog(title: 'Download fail', contextTitle: 'Something went wrong');
-       allVideoBox.delete(video.id);
      }
   }
   

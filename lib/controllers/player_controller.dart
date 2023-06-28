@@ -117,9 +117,9 @@ class PlayerController extends GetxController{
 
     await player.setAudioSource(source,);
 
-    // if(isShuffle){
-    //   player.setShuffleModeEnabled(true);
-    // }
+    if(player.shuffleModeEnabled){
+      player.setShuffleModeEnabled(true);
+    }
 
     Get.back();
     player.play();

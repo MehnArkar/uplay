@@ -1,9 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
-import 'package:uplayer/utils/log/super_print.dart';
 import 'package:uplayer/views/global_ui/dialog.dart';
 import '../models/playlist.dart';
 

@@ -289,7 +289,7 @@ class PlaylistScreen extends StatelessWidget {
                 if(playerController.currentVideo?.id!=video.id) {
                   playerController.play(video, isNetwork: false);
                 }else{
-                  Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 800));
+                  Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 500));
                 }
               },
               child: Container(
@@ -390,10 +390,10 @@ class PlaylistScreen extends StatelessWidget {
         builder: (ctx){
           return SizedBox(
               width: Get.width,
-              height: Get.height*0.85,
+              height: Get.height*0.9,
               child: GetBuilder<LibraryController>(
                 builder:(libraryController)=> Container(
-                  padding:const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
+                  padding:const EdgeInsets.symmetric(horizontal: 25,),
                   decoration:const BoxDecoration(
                       color: AppColors.secondaryColor,
                       borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
@@ -401,6 +401,18 @@ class PlaylistScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      const SizedBox(height: 15,),
+                      Center(
+                        child: Container(
+                          width: Get.width*0.15,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(2.5)
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 10,),
                       Text('Add new',style: AppConstants.textStyleTitleMedium,),
                       const SizedBox(height: 15,),
                       TextField(
@@ -418,33 +430,57 @@ class PlaylistScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 15,),
                       Expanded(
-                          child:ValueListenableBuilder<Box<YoutubeVideo>>(
-                              valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxAllVideos).listenable(),
+                          child:ValueListenableBuilder<Box<Playlist>>(
+                              valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys: ['Saved Songs']),
                               builder: (context,box,widget){
-                                return ListView.builder(
-                                    itemCount: box.length,
-                                    itemBuilder: (context,index){
-                                      YoutubeVideo currentVideo = box.getAt(index)!;
-                                      return ListTile(
-                                        onTap: (){
-                                          libraryController.selectedVideos.add(currentVideo);
-                                          libraryController.update();
-                                        },
-                                        leading: Container(
-                                          width: Get.width*0.15,
-                                          height: Get.width*0.15,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.circular(15),
-                                              image: DecorationImage(image: CachedNetworkImageProvider(currentVideo.thumbnails.high??''),fit: BoxFit.cover)
+                                List<YoutubeVideo> allSongs = [];
+                                Playlist? playlist = box.get('Saved Songs');
+                                if(playlist!=null){
+                                 allSongs = playlist.videoList;
+                                }
+                                return CupertinoScrollbar(
+                                  child: ListView.builder(
+                                      itemCount: allSongs.length,
+                                      itemBuilder: (context,index){
+                                        YoutubeVideo currentVideo = allSongs[index];
+                                        return ListTile(
+                                          onTap: (){
+                                            if(libraryController.selectedVideos.contains(currentVideo)){
+                                              libraryController.selectedVideos.remove(currentVideo);
+                                            }else {
+                                              libraryController.selectedVideos.add(currentVideo);
+                                            }
+                                            libraryController.update();
+                                          },
+                                          leading: Container(
+                                            width: Get.width*0.15,
+                                            height: Get.width*0.15,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(15),
+                                                image: DecorationImage(image: CachedNetworkImageProvider(currentVideo.thumbnails.high??''),fit: BoxFit.cover)
+                                            ),
                                           ),
-                                        ),
-                                        title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: libraryController.selectedVideos.contains(currentVideo)?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
-                                        subtitle: Text(currentVideo.channelTitle,style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),),
-                                        trailing: Icon(Icons.check,color:libraryController.selectedVideos.contains(currentVideo)? AppColors.primaryColor:Colors.transparent,)
-                                      );
-                                    });
+                                          title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: libraryController.selectedVideos.contains(currentVideo)?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                                          subtitle: Text(currentVideo.channelTitle,style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),),
+                                          trailing: Icon(Icons.check,color:libraryController.selectedVideos.contains(currentVideo)? AppColors.primaryColor:Colors.transparent,)
+                                        );
+                                      }),
+                                );
                               })
-                      )
+                      ),
+                      const SizedBox(height: 15,),
+                      ElevatedButton(
+                          onPressed:libraryController.selectedVideos.isEmpty?null:
+                              (){},
+                          style: ElevatedButton.styleFrom(
+                            minimumSize:const Size(double.maxFinite, 50),
+                            disabledBackgroundColor: AppColors.colorTextField,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25),
+                            )
+                          ),
+                          child: Text('Add',style: AppConstants.textStyleTitleSmall,)),
+                      const SizedBox(height: 25,),
                     ],
                   ),
             ),

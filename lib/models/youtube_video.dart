@@ -4,7 +4,7 @@ import 'package:hive/hive.dart';
 part 'youtube_video.g.dart';
 
 @HiveType(typeId: 1,adapterName: 'YoutubeVideoAdapter')
-class YoutubeVideo{
+class YoutubeVideo extends HiveObject{
   @HiveField(0)
   String id;
   @HiveField(1)
