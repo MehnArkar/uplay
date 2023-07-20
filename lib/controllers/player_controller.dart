@@ -107,7 +107,7 @@ class PlayerController extends GetxController{
           artUri: Uri.parse(currentVideo.thumbnails.high??''),
         ),
       );
-    });
+    }).toList();
 
     AudioSource source = ConcatenatingAudioSource(
         useLazyPreparation: true,
@@ -115,7 +115,7 @@ class PlayerController extends GetxController{
         children: audioSourceList
     );
 
-    await player.setAudioSource(source,);
+    await player.setAudioSource(source,initialIndex: 0,initialPosition: Duration.zero);
 
     if(player.shuffleModeEnabled){
       player.setShuffleModeEnabled(true);
@@ -152,15 +152,6 @@ class PlayerController extends GetxController{
       player.pause();
     }else{
       player.play();
-    }
-  }
-
-  seek(bool isPrevious) {
-    Duration currentDuration =  player.position;
-    if(isPrevious){
-      player.seek(currentDuration-const Duration(seconds: 15));
-    }else{
-      player.seek(currentDuration+const Duration(seconds: 15));
     }
   }
 

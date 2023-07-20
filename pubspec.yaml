@@ -55,7 +55,7 @@ dependencies:
   hive_flutter: ^1.1.0
   http: ^0.13.6
   percent_indicator: ^4.2.3
-  audioplayers: ^4.1.0
+
 
 dev_dependencies:
   flutter_test:

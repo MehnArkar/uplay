@@ -152,7 +152,7 @@ class MiniPlayerControll extends StatelessWidget {
       children: [
         IconButton(
             onPressed:controller.player.hasPrevious? (){
-              controller.seek(true);
+              controller.player.seekToPrevious();
             }:null,
             color: Colors.white,
             disabledColor: Colors.grey,
@@ -163,8 +163,8 @@ class MiniPlayerControll extends StatelessWidget {
             },
             child: Icon(controller.player.playerState.playing? Iconsax.pause5: Iconsax.play5 ,color: Colors.white,)),
         IconButton(
-            onPressed:controller.player.hasPrevious? (){
-              controller.seek(false);
+            onPressed:controller.player.hasNext? (){
+              controller.player.seekToNext();
             }:null,
             color: Colors.white,
             disabledColor: Colors.grey,
