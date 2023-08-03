@@ -1,10 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../utils/constants/app_color.dart';
 
 class AnimateBackground extends StatefulWidget {
@@ -23,7 +20,7 @@ class _AnimateBackgroundState extends State<AnimateBackground> {
   @override
   initState() {
     super.initState();
-    update();
+    // update();
   }
 
   update() {
@@ -55,6 +52,9 @@ class _AnimateBackgroundState extends State<AnimateBackground> {
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+    );
     return Scaffold(
       backgroundColor: Colors.black,
       body: Obx(
@@ -93,7 +93,6 @@ class _AnimateBackgroundState extends State<AnimateBackground> {
                 color:AppColors.primaryColor
             )
           ]
-
       ),
     );
   }

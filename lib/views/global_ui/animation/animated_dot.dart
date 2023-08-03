@@ -10,6 +10,7 @@ class AnimatedDot extends StatefulWidget {
 }
 
 class _AnimatedDotState extends State<AnimatedDot> with SingleTickerProviderStateMixin{
+
   late AnimationController _controller;
   late Animation<double> _animation1;
   late Animation<double> _animation2;
@@ -44,6 +45,14 @@ class _AnimatedDotState extends State<AnimatedDot> with SingleTickerProviderStat
       }
     });
   }
+
+  @override
+  void dispose() {
+   _controller.dispose();
+    super.dispose();
+  }
+
+
 
 
 

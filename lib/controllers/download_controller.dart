@@ -7,13 +7,10 @@ import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uplayer/controllers/library_controller.dart';
 import 'package:uplayer/controllers/player_controller.dart';
-import 'package:uplayer/models/playlist.dart';
-import 'package:uplayer/utils/constants/app_constant.dart';
 import '../models/youtube_video.dart';
 import '../utils/log/snap_bar.dart';
 import '../utils/log/super_print.dart';
 import '../views/global_ui/dialog.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
 @pragma('vm:entry-point')
 void downloadCallback(String id, int status, int progress) {
@@ -51,8 +48,6 @@ class DownloadController extends GetxController{
           }
       }
     });
-
-
   }
 
   @override
@@ -120,7 +115,7 @@ class DownloadController extends GetxController{
       update();
 
       //Get url
-      String url = await Get.find<PlayerController>().getUrl(video);
+      String url = await Get.find<PlayerController>().getUrl(video,true);
 
       //Save Dir
       Directory dir = await getApplicationDocumentsDirectory();

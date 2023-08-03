@@ -13,7 +13,6 @@ import '../../utils/constants/app_color.dart';
 import '../global_ui/animate_background.dart';
 import '../global_ui/global_widgets.dart';
 import '../global_ui/super_scaffold.dart';
-import 'package:marquee/marquee.dart';
 
 class PlayerControllerPage extends StatelessWidget {
   const PlayerControllerPage({Key? key}) : super(key: key);
@@ -162,29 +161,25 @@ class PlayerControllerPage extends StatelessWidget {
     return StreamBuilder<PositionData>(
         stream: combinedStream,
         builder:(context,snapShot) {
-          final playerData = snapShot.data as PositionData;
+          final PositionData? playerData = snapShot.data;
+          final Duration total = playerData!=null?Duration(milliseconds: playerData.duration.inMilliseconds~/2):Duration.zero;
+          final Duration progress = playerData!=null?
+          playerData.position>total?total:playerData.position:
+          Duration.zero;
+          final Duration buffered = playerData!=null?
+          playerData.bufferedPosition>total?total:playerData.bufferedPosition:
+          Duration.zero;
           return ProgressBar(
-              progress: playerData.position,
-              total: playerData.duration,
-              buffered: playerData.bufferedPosition,
+              progress: progress,
+              total: total,
+              buffered: buffered,
               progressBarColor: AppColors.primaryColor,
               bufferedBarColor: AppColors.primaryColor.withOpacity(0.5),
               baseBarColor: Colors.grey,
               thumbColor: AppColors.primaryColor,
               timeLabelTextStyle: AppConstants.textStyleSmall.copyWith(color: Colors.grey),
               onSeek: (duration){
-                try {
-                  print(controller.player.currentIndex);
-                  print(duration);
                   controller.player.seek(duration,index: controller.player.currentIndex);
-                }catch(e){
-                  print('e');
-                }
-                // if(!controller.player.hasNext && !controller.player.hasPrevious){
-                //   controller.player.seek(duration);
-                // }else {
-                //   controller.player.seek(duration, index: controller.player.currentIndex);
-                // }
               },
           );
         }
@@ -223,7 +218,10 @@ class PlayerControllerPage extends StatelessWidget {
               IconButton(
                   onPressed: playerController.player.hasNext?
                       (){
-                    playerController.player.seekToNext();
+                    print(playerController.player.position);
+                    print(playerController.player.currentIndex);
+                    playerController.player.seek(Duration(seconds: playerController.player.position.inSeconds+15),index: playerController.player.currentIndex);
+                    // playerController.player.seekToNext();
                   }:null,
                   color: Colors.white,
                   disabledColor: Colors.grey,

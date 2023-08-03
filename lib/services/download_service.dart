@@ -16,8 +16,7 @@ class DownloadService{
     PermissionStatus status = await Permission.storage.request();
     if(status == PermissionStatus.granted || status == PermissionStatus.limited) {
       //Get url
-      String url = await Get.find<PlayerController>().getUrl(video);
-
+      String url = await Get.find<PlayerController>().getUrl(video,true);
       //Save Dir
       Directory dir = await getApplicationDocumentsDirectory();
 
@@ -29,6 +28,7 @@ class DownloadService{
         showNotification: true,
         openFileFromNotification: true,
       );
+
     }else{
       showCustomDialog(title: 'Permission denied!', contextTitle: 'Please give storage permission to download');
     }

@@ -14,12 +14,6 @@ class PlayerController extends GetxController{
   @override
   void onInit() {
     super.onInit();
-    player.processingStateStream.listen((state) {
-      if(state==ProcessingState.completed){
-        // currentVideo=null;
-        // update();
-      }
-    });
 
     player.sequenceStateStream.listen((data) {
       if(data?.currentSource!=null){
@@ -29,13 +23,15 @@ class PlayerController extends GetxController{
       }
     });
 
+
+
   }
 
   @override
   void onClose() {
-    // TODO: implement onClose
-    super.onClose();
     player.dispose();
+    super.onClose();
+
   }
 
   AudioPlayer player = AudioPlayer();
@@ -43,6 +39,7 @@ class PlayerController extends GetxController{
   YoutubeVideo? currentVideo;
   List<YoutubeVideo> playlistVideo = [];
   bool isLoading = false;
+  bool isOnlinePlaying = false;
 
 
 
@@ -50,6 +47,7 @@ class PlayerController extends GetxController{
   play(YoutubeVideo video,{bool isNetwork = true}) async {
     //Update data
     isLoading = true;
+    isOnlinePlaying = true;
     update();
     if(isNetwork) {
       String audioUrl = await getUrl(video);
@@ -127,23 +125,28 @@ class PlayerController extends GetxController{
   }
 
 
-  Future<String> getUrl(YoutubeVideo video) async{
+  Future<String> getUrl(YoutubeVideo video,[bool isDownloadUrl=false]) async{
 
     final manifest = await youtubeExplode.videos.streamsClient.getManifest(video.id);
-    final audioStreamInfo = manifest.audioOnly.sortByBitrate();
-
-    String audioUrl = '';
-    audioUrl = audioStreamInfo.first.url.toString();
-    if (Platform.isIOS) {
-      final List<AudioStreamInfo> m4aStreams = audioStreamInfo.where((element) {
-        return element.audioCodec.contains('mp4');}).toList();
-      if (m4aStreams.isNotEmpty) {
-        audioUrl = m4aStreams.first.url.toString();
-      }
-    }else{
+    if(!isDownloadUrl) {
+      final audioStreamInfo = manifest.audioOnly.sortByBitrate();
+      String audioUrl = '';
       audioUrl = audioStreamInfo.first.url.toString();
+      if (Platform.isIOS) {
+        final List<AudioStreamInfo> m4aStreams = audioStreamInfo.where((element) {
+          return element.audioCodec.contains('mp4');
+        }).toList();
+        if (m4aStreams.isNotEmpty) {
+          audioUrl = m4aStreams.first.url.toString();
+        }
+      } else {
+        audioUrl = audioStreamInfo.first.url.toString();
+      }
+      return audioUrl;
+    }else{
+      final audioStreamInfo = manifest.audioOnly.withHighestBitrate();
+      return audioStreamInfo.url.toString();
     }
-    return audioUrl;
   }
 
 

@@ -14,7 +14,6 @@ import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:lottie/lottie.dart';
-import 'package:marquee/marquee.dart';
 import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
 import 'package:uplayer/views/player/player_controller_page.dart';
 
@@ -42,7 +41,7 @@ class SearchPage extends StatelessWidget {
             builder:(controller)=>
                 controller.isSearching?
                     const SliverFillRemaining(
-                      child: Center(child: CupertinoActivityIndicator(color: AppColors.primaryColor,),),
+                      child: Center(child: CircularProgressIndicator(color: AppColors.primaryColor,),),
                     ):
                     SliverList(
                         delegate: SliverChildBuilderDelegate(
