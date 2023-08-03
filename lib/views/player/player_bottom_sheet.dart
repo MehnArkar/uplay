@@ -1,13 +1,16 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:uplayer/views/global_ui/progress_bar.dart';
 
 import '../../controllers/player_controller.dart';
 import '../../models/position_data.dart';
@@ -138,54 +141,11 @@ class PlayerBottomSheet extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          progressBar(),
+          const AudioProgressBar(),
           const SizedBox(height: 25,),
           playControllPanel(),
         ],
       ),
-    );
-  }
-
-  Widget progressBar(){
-    PlayerController controller = Get.find();
-    final positionStream = controller.player.positionStream;
-    final durationStream = controller.player.durationStream;
-    final bufferedPositionStream = controller.player.bufferedPositionStream;
-
-    final combinedStream = CombineLatestStream(
-      [positionStream, bufferedPositionStream,durationStream],
-          (List<Duration?> values) {
-        final position = values[0];
-        final bufferedPosition = values[1];
-        final durationStream = values[2]??Duration.zero;
-        return PositionData(position!,  bufferedPosition!,durationStream);
-      },
-    );
-    return StreamBuilder<PositionData>(
-        stream: combinedStream,
-        builder:(context,snapShot) {
-          final PositionData? playerData = snapShot.data;
-          final Duration total = playerData!=null?Duration(milliseconds: playerData.duration.inMilliseconds~/2):Duration.zero;
-          final Duration progress = playerData!=null?
-          playerData.position>total?total:playerData.position:
-          Duration.zero;
-          final Duration buffered = playerData!=null?
-          playerData.bufferedPosition>total?total:playerData.bufferedPosition:
-          Duration.zero;
-          return ProgressBar(
-            progress: progress,
-            total: total,
-            buffered: buffered,
-            progressBarColor: AppColors.primaryColor,
-            bufferedBarColor: AppColors.primaryColor.withOpacity(0.5),
-            baseBarColor: Colors.grey,
-            thumbColor: AppColors.primaryColor,
-            timeLabelTextStyle: AppConstants.textStyleSmall.copyWith(color: Colors.grey),
-            onSeek: (duration){
-              controller.player.seek(duration,index: controller.player.currentIndex);
-            },
-          );
-        }
     );
   }
 
@@ -213,16 +173,28 @@ class PlayerBottomSheet extends StatelessWidget {
                   onTap: (){
                     playerController.togglePlayPause();
                   },
-                  child: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: AppColors.primaryColor,
-                      child: Icon(playerState!=null? playerState.playing? Iconsax.pause5: Iconsax.play5 :Iconsax.pause,color: Colors.white,))),
+                  child: SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        CircleAvatar(
+                            radius: 25,
+                            backgroundColor: AppColors.primaryColor,
+                            child: Icon(playerState!=null? playerState.playing? Iconsax.pause5: Iconsax.play5 :Iconsax.pause,color: Colors.white,)),
+                        if(playerController.isLoading)
+                        const SizedBox(
+                            width: 60,
+                            height: 60,
+                            child: CircularProgressIndicator())
+                      ],
+                    ),
+                  )),
               const SizedBox(width: 40,),
               IconButton(
                   onPressed: playerController.player.hasNext?
                       (){
-                    print(playerController.player.position);
-                    print(playerController.player.currentIndex);
                     playerController.player.seek(Duration(seconds: playerController.player.position.inSeconds+15),index: playerController.player.currentIndex);
                     // playerController.player.seekToNext();
                   }:null,
@@ -234,4 +206,5 @@ class PlayerBottomSheet extends StatelessWidget {
         }
     );
   }
+
 }

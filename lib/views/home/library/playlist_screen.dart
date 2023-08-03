@@ -13,11 +13,7 @@ import 'package:uplayer/controllers/library_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/utils/log/snap_bar.dart';
-import 'package:uplayer/utils/log/super_print.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
-import 'package:uplayer/views/player/player_controller_page.dart';
-
-import '../../../controllers/download_controller.dart';
 import '../../../controllers/player_controller.dart';
 import '../../../models/playlist.dart';
 import '../../../utils/constants/app_color.dart';
@@ -289,7 +285,7 @@ class PlaylistScreen extends StatelessWidget {
                 if(playerController.currentVideo?.id!=video.id) {
                   playerController.playSingle(video, isNetwork: false);
                 }else{
-                  Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 500));
+
                 }
               },
               child: Container(

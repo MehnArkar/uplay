@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,6 @@ import 'package:uplayer/controllers/player_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/views/player/player_bottom_sheet.dart';
-import 'package:uplayer/views/player/player_controller_page.dart';
 import '../../utils/constants/app_constant.dart';
 
 class MiniPlayerControll extends StatelessWidget {
@@ -27,7 +27,6 @@ class MiniPlayerControll extends StatelessWidget {
             borderRadius: BorderRadius.circular(200),
             child: GestureDetector(
               onTap: (){
-                // Get.to(const PlayerControllerPage(),transition: Transition.downToUp);
                 showModalBottomSheet(
                     isScrollControlled: true,
                     context: context,
@@ -182,11 +181,19 @@ class MiniPlayerControll extends StatelessWidget {
       stream: controller.player.positionStream,
       builder: (context,snackshot) {
         double progress = 0;
-        Duration currentDuration = snackshot.data??const Duration(seconds: 0);
-        Duration totalDuration =  controller.player.duration??const Duration();
-        if(totalDuration.inMilliseconds>0){
-          progress = currentDuration.inMilliseconds/totalDuration.inMilliseconds;
-        }
+        Duration currentDuration = Duration.zero;
+        Duration totalDuration = Duration.zero;
+          if(Platform.isIOS && controller.isOnlinePlaying){
+            currentDuration = snackshot.data!=null?Duration(milliseconds: snackshot.data!.inMilliseconds~/2):Duration.zero;
+            totalDuration =  controller.player.duration!=null?Duration(milliseconds: controller.player.duration!.inMilliseconds~/2):Duration.zero;
+          }else {
+            currentDuration = snackshot.data??const Duration(seconds: 0);
+            totalDuration =  controller.player.duration??const Duration();
+          }
+          if(totalDuration.inMilliseconds>0) {
+            progress = currentDuration.inMilliseconds / totalDuration.inMilliseconds;
+          }
+
         return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
             child: LinearProgressIndicator(

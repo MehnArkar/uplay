@@ -9,7 +9,7 @@ import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import '../../utils/constants/app_constant.dart';
-import '../player/player_controller_page.dart';
+import '../player/player_bottom_sheet.dart';
 
 class VideoWidget extends StatelessWidget {
   final YoutubeVideo video;
@@ -38,7 +38,10 @@ class VideoWidget extends StatelessWidget {
                   if(controller.currentVideo?.id!=video.id) {
                     controller.playSingle(video,isNetwork: isOnlineVideo);
                   }else{
-                    Get.to(const PlayerControllerPage());
+                    showModalBottomSheet(
+                        isScrollControlled: true,
+                        context: context,
+                        builder: (context)=>const PlayerBottomSheet());
                   }
                 },
         );

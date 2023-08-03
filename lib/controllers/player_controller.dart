@@ -23,7 +23,17 @@ class PlayerController extends GetxController{
       }
     });
 
-
+    player.positionStream.listen((duration) {
+      if(Platform.isIOS && isOnlinePlaying){
+        if(player.duration!=null && duration>=Duration(milliseconds: player.duration!.inMilliseconds~/2)){
+          if(player.hasNext){
+            player.seekToNext();
+          }else{
+            player.pause();
+          }
+        }
+      }
+    });
 
   }
 
@@ -55,7 +65,7 @@ class PlayerController extends GetxController{
     }
     //Update data
 
-    isOnlinePlaying = true;
+    isOnlinePlaying = isNetwork;
     if(isNetwork) {
       String audioUrl = await getUrl(video);
       superPrint(audioUrl);
@@ -99,6 +109,8 @@ class PlayerController extends GetxController{
   playMulti(List<YoutubeVideo> videoList,{bool isShuffle=false}) async{
 
     showLoadingDialog();
+
+    isOnlinePlaying=false;
 
     Directory dir = await getApplicationDocumentsDirectory();
     List<AudioSource> audioSourceList = List.generate(videoList.length, (index) {
