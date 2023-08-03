@@ -1,21 +1,15 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:uplayer/controllers/download_controller.dart';
-import 'package:uplayer/controllers/player_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
 import 'package:uplayer/models/playlist.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:lottie/lottie.dart';
-import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
-import 'package:uplayer/views/player/player_controller_page.dart';
+import 'package:uplayer/views/global_ui/video_widget.dart';
 
 class SearchPage extends StatelessWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -57,110 +51,30 @@ class SearchPage extends StatelessWidget {
 
 
   Widget eachVideoList(YoutubeVideo video){
-    return GetBuilder<PlayerController>(
-      builder:(playerController)=> StreamBuilder<PlayerState>(
-        stream: playerController.player.playerStateStream,
-        builder: (context,snapShot) {
-          return GestureDetector(
-            onTap: (){
-              if(playerController.currentVideo?.id!=video.id) {
-                playerController.play(video);
-              }else{
-                Get.to(const PlayerControllerPage());
+    return VideoWidget(
+        video: video,
+        trailingWidget: GetBuilder<DownloadController>(
+          builder:(controller)=> ValueListenableBuilder<Box<Playlist>>(
+              valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
+              builder:(context,box,widget) {
+                bool isDownloaded = false;
+                Playlist? playlist = box.get('Saved Songs');
+                if(playlist!=null){
+                  if((playlist.videoList.where((each) => each.id==video.id)).isNotEmpty){
+                    isDownloaded = true;
+                  }
+                }
+                return isDownloaded || controller.downloadingVideo.containsKey(video.id) ?
+                const SizedBox() :
+                GestureDetector(
+                    onTap: () {
+                      Get.find<DownloadController>().download(video);
+                    },
+                    child: const Icon(
+                      Iconsax.arrow_down_2, color: Colors.grey,));
               }
-            },
-            child: Container(
-              padding:const EdgeInsets.symmetric(horizontal: 25),
-              margin:const EdgeInsets.only(bottom: 15),
-              color: Colors.transparent,
-              child: Row(
-                children: [
-                  Container(
-                    width: Get.width*0.15,
-                    height: Get.width*0.15,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnails.high??''),fit: BoxFit.cover),
-                    ),
-                    child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id && (snapShot.data?.processingState!=ProcessingState.completed)?
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(14),
-                              child: Stack(
-                                alignment: Alignment.center,
-                                children: [
-                                  Positioned.fill(
-                                    child: Center(
-                                      child: BackdropFilter(
-                                        filter: ImageFilter.blur(
-                                          sigmaX: 1.0,
-                                          sigmaY: 1.0,
-                                        ),
-                                        child: Container(
-                                          color: Colors.black.withOpacity(0.25),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  playerController.isLoading?
-                                    const AnimatedDot() :
-                                    Lottie.asset('assets/lottie/wave.json',),
-
-                                ],
-                              ),
-                            )
-                           :
-                          Container()
-                  ),
-                  const SizedBox(width: 15,),
-                  Expanded(
-                      child: SizedBox(
-                        height: Get.width*0.15,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // playerController.currentVideo!=null && playerController.currentVideo!.id==video.id?
-                            // Marquee(
-                            //     text: video.title,
-                            //     style: AppConstants.textStyleMedium.copyWith(color: AppColors.primaryColor),
-                            // ):
-                            Text(
-                              video.title,
-                              style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id && snapShot.data!=null && snapShot.data!.processingState!=ProcessingState.completed?AppColors.primaryColor:Colors.white),
-                              maxLines: 1,overflow: TextOverflow.ellipsis,),
-                            Text(video.channelTitle.replaceFirst('VEVO','')??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
-
-                  ],),
-                      )),
-                  const SizedBox(width: 15,),
-                  GetBuilder<DownloadController>(
-                    builder:(controller)=> ValueListenableBuilder<Box<Playlist>>(
-                      valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
-                      builder:(context,box,widget) {
-                        bool isDownloaded = false;
-                        Playlist? playlist = box.get('Saved Songs');
-                        if(playlist!=null){
-                          if((playlist.videoList.where((each) => each.id==video.id)).isNotEmpty){
-                            isDownloaded = true;
-                          }
-                        }
-                        return isDownloaded || controller.downloadingVideo.containsKey(video.id) ?
-                            Container()
-                            : GestureDetector(
-                            onTap: () {
-                              Get.find<DownloadController>().download(video);
-                            },
-                            child: const Icon(
-                              Iconsax.arrow_down_2, color: Colors.grey,));
-                      }
-                    ),
-                  )
-                ],
-              ),
-            ),
-          );
-        }
-      ),
+          ),
+        )
     );
   }
 

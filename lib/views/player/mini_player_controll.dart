@@ -7,7 +7,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:uplayer/controllers/player_controller.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
-import 'package:uplayer/views/global_ui/animation/animated_dot.dart';
+import 'package:uplayer/views/player/player_bottom_sheet.dart';
 import 'package:uplayer/views/player/player_controller_page.dart';
 import '../../utils/constants/app_constant.dart';
 
@@ -27,7 +27,11 @@ class MiniPlayerControll extends StatelessWidget {
             borderRadius: BorderRadius.circular(200),
             child: GestureDetector(
               onTap: (){
-                Get.to(const PlayerControllerPage(),transition: Transition.downToUp);
+                // Get.to(const PlayerControllerPage(),transition: Transition.downToUp);
+                showModalBottomSheet(
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context)=>const PlayerBottomSheet());
               },
               child: Stack(
                 children: [
@@ -110,7 +114,7 @@ class MiniPlayerControll extends StatelessWidget {
                     sigmaX: 1.0,
                     sigmaY: 1.0,
                   ),
-                  child: const AnimatedDot(),
+                  child: const CupertinoActivityIndicator(color: AppColors.primaryColor,),
                 ),
               ),
             ),

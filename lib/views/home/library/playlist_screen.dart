@@ -196,7 +196,7 @@ class PlaylistScreen extends StatelessWidget {
             top: Get.height*0.25-(Get.width*0.15),
             child: GestureDetector(
               onTap: (){
-                Get.find<PlayerController>().playPlaylist(playlist.videoList);
+                Get.find<PlayerController>().playMulti(playlist.videoList);
               },
               child: Container(
                 width: Get.width*0.15,
@@ -287,7 +287,7 @@ class PlaylistScreen extends StatelessWidget {
             return GestureDetector(
               onTap: (){
                 if(playerController.currentVideo?.id!=video.id) {
-                  playerController.play(video, isNetwork: false);
+                  playerController.playSingle(video, isNetwork: false);
                 }else{
                   Get.to(const PlayerControllerPage(),transition: Transition.downToUp,duration:const Duration(milliseconds: 500));
                 }

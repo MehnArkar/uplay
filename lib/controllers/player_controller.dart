@@ -40,15 +40,22 @@ class PlayerController extends GetxController{
   List<YoutubeVideo> playlistVideo = [];
   bool isLoading = false;
   bool isOnlinePlaying = false;
+  bool isSinglePlaying = true;
 
 
 
 
-  play(YoutubeVideo video,{bool isNetwork = true}) async {
-    //Update data
+  playSingle(YoutubeVideo video,{bool isNetwork = true}) async {
     isLoading = true;
-    isOnlinePlaying = true;
+    currentVideo = video;
     update();
+
+    if(player.playing){
+      player.stop();
+    }
+    //Update data
+
+    isOnlinePlaying = true;
     if(isNetwork) {
       String audioUrl = await getUrl(video);
       superPrint(audioUrl);
@@ -89,7 +96,7 @@ class PlayerController extends GetxController{
 
   }
 
-  playPlaylist(List<YoutubeVideo> videoList,{bool isShuffle=false}) async{
+  playMulti(List<YoutubeVideo> videoList,{bool isShuffle=false}) async{
 
     showLoadingDialog();
 
