@@ -1,10 +1,7 @@
 import 'dart:math';
-import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:uplayer/controllers/library_controller.dart';

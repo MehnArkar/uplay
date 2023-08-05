@@ -1,151 +1,163 @@
-import 'dart:io';
-import 'dart:isolate';
-import 'dart:ui';
+import 'package:background_downloader/background_downloader.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:uplayer/controllers/library_controller.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uplayer/controllers/player_controller.dart';
-import '../models/youtube_video.dart';
+import 'package:uplayer/models/download_data.dart';
+import 'package:uplayer/models/download_status.dart';
+import 'package:uplayer/models/youtube_video.dart';
+import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/views/global_ui/dialog.dart';
+
 import '../utils/log/snap_bar.dart';
-import '../utils/log/super_print.dart';
-import '../views/global_ui/dialog.dart';
-
-@pragma('vm:entry-point')
-void downloadCallback(String id, int status, int progress) {
-  final SendPort send = IsolateNameServer.lookupPortByName('downloader_send_port')!;
-  send.send([id, status, progress]);
-}
-
 
 class DownloadController extends GetxController{
-
-  Map<String,YoutubeVideo> downloadingVideo ={};
-  Map<String,DownloadTask> downloadingTask = {};
   bool isPanned = false;
-
   //For animation
   double statusBarOpacity = 1;
   double statusBarHeight = 85;
   ScrollController scrollController = ScrollController();
 
+  FileDownloader downloader = FileDownloader();
+
+
   @override
   void onInit() {
-    // TODO: implement onInit
     super.onInit();
-    bindBackgroundIsolate();
-    FlutterDownloader.registerCallback(downloadCallback);
-    scrollController.addListener(() {
-      if(scrollController.position.pixels<=statusBarHeight){
-        isPanned = false;
-        statusBarOpacity = 1-(scrollController.position.pixels/statusBarHeight);
-        update();
-      }else{
-          if(!isPanned){
-            isPanned = true;
-            update();
-          }
-      }
-    });
+    initLoad();
+
   }
 
   @override
   void onClose() {
-    unbindBackgroundIsolate();
     super.onClose();
   }
 
-  final ReceivePort port = ReceivePort();
+  initLoad()async{
+    listenUpdate();
+    await downloader.trackTasks();
+    await downloader.resumeFromBackground();
+    await resumeIncompleteDownload();
+  }
 
-  void bindBackgroundIsolate() {
-    bool isSuccess = IsolateNameServer.registerPortWithName(port.sendPort, 'downloader_send_port');
-    if (!isSuccess) {
-      unbindBackgroundIsolate();
-      bindBackgroundIsolate();
-      return;
-    }
-    port.listen((dynamic data) async {
-      String id = data[0];
-      DownloadTaskStatus status = DownloadTaskStatus(data[1]);
-      int progress = data[2];
-
-      if(downloadingTask.keys.contains(id)){
-        DownloadTask currentTask = downloadingTask[id]!;
-        DownloadTask updateTask = DownloadTask(
-            taskId: currentTask.taskId,
-            status: status,
-            progress: progress,
-            url: currentTask.url,
-            filename: currentTask.filename,
-            savedDir: currentTask.savedDir,
-            timeCreated: currentTask.timeCreated,
-            allowCellular: currentTask.allowCellular);
-        downloadingTask[id]=updateTask;
+  listenUpdate(){
+    downloader.updates.listen((update) {
+     Box<DownloadData> downloadBox = Hive.box<DownloadData>(AppConstants.boxDownload);
+     String id = update.task.taskId;
+     DownloadData existingData = downloadBox.get(id)!;
+      if(update is TaskStatusUpdate){
+        debugPrint(update.status.toString());
+          downloadBox.put(
+              id,
+              DownloadData(
+                  id: existingData.id,
+                  progress: existingData.progress,
+                  status: getStatus(update.status),
+                  video: existingData.video,
+                  url: existingData.url
+              ));
+      }else if(update is TaskProgressUpdate){
+        debugPrint(update.progress.toString());
+        downloadBox.put(
+            id,
+            DownloadData(
+                id: existingData.id,
+                progress: update.progress,
+                status: existingData.status,
+                video: existingData.video,
+                url: existingData.url
+            ));
       }
-
-      if(status==DownloadTaskStatus.complete) {
-        ///If download complete remove form downloading and add to local
-        await Future.delayed(const Duration(milliseconds: 100));
-        List<DownloadTask>? taskList = await FlutterDownloader.loadTasksWithRawQuery(query: "SELECT * FROM task WHERE task_id='$id'");
-        YoutubeVideo currentVideo = downloadingVideo[taskList?.first.filename?.replaceFirst('.mp3','')]!;
-
-        ///Add to library box
-        LibraryController libraryController = Get.find();
-        libraryController.addNewToPlaylist('Saved Songs', [currentVideo]);
-
-        ///Remove from variable
-        downloadingVideo.remove(currentVideo.id);
-
-        showSnackBar('Download complete');
-      }
-
-      update();
     });
   }
 
-  void unbindBackgroundIsolate() {
-    IsolateNameServer.removePortNameMapping('downloader_send_port');
-  }
-
-   void download(YoutubeVideo video) async{
-      showLoadingDialog();
-
-      downloadingVideo.addEntries([MapEntry(video.id, video)]);
-      update();
-
-      //Get url
-      String url = await Get.find<PlayerController>().getUrl(video,true);
-
-      //Save Dir
-      Directory dir = await getApplicationDocumentsDirectory();
-      Get.back();
-
-     try{
-       await FlutterDownloader.enqueue(
-           url: url,
-           fileName: '${video.id}.mp3',
-           savedDir: dir.path,
-           showNotification: true,
-           openFileFromNotification: false,
-           saveInPublicStorage: false
-       );
-       showSnackBar('Your download is start');
-     }catch(e){
-       superPrint('error in download $e');
-       showCustomDialog(title: 'Download fail', contextTitle: 'Something went wrong');
-     }
-  }
-  
-  Future<void> getDownloadingTask() async{
-    downloadingTask.clear();
-    List<DownloadTask> allTask =await FlutterDownloader.loadTasks()??[];
-    List<DownloadTask> runningTask =  allTask.where((task) => task.status==DownloadTaskStatus.running).toList();
-    for (var task in runningTask) {
-      downloadingTask.addEntries([MapEntry(task.taskId, task)]);
+  resumeIncompleteDownload() async{
+    List<DownloadData> dataList = Hive.box<DownloadData>(AppConstants.boxDownload).values.toList();
+    for (var data in dataList) {
+      if(data.status == DownloadStatus.enqueue || data.status == DownloadStatus.downloading){
+        DownloadTask task = DownloadTask(
+          url: data.url,
+          filename: '${data.video.id}.mp3',
+          updates: Updates.statusAndProgress, // request status and progress updates
+          requiresWiFi: false,
+          taskId: data.video.id,
+          allowPause: true,
+        );
+        if(await downloader.taskCanResume(task)){
+          await downloader.resume(task);
+        }else{
+          downloader.database.deleteRecordWithId(task.taskId);
+          Hive.box<DownloadData>(AppConstants.boxDownload).delete(task.taskId);
+        }
+      }
     }
-    update();
   }
+
+
+  download(YoutubeVideo video) async{
+    showLoadingDialog();
+    String url = await Get.find<PlayerController>().getUrl(video);
+    DownloadTask task = DownloadTask(
+      url: url,
+      filename: '${video.id}.mp3',
+      updates: Updates.statusAndProgress, // request status and progress updates
+      requiresWiFi: false,
+      taskId: video.id,
+      allowPause: true,
+    );
+    bool isSuccess = await downloader.enqueue(task);
+    if(isSuccess){
+      DownloadData downloadData = DownloadData(
+          id: video.id,
+          progress: 0.0,
+          status: DownloadStatus.enqueue,
+          video: video,
+          url: url);
+      Box<DownloadData> box = Hive.box<DownloadData>(AppConstants.boxDownload);
+      box.put(video.id, downloadData);
+      Get.back();
+      showSnackBar('Your download is start');
+    }else{
+      Get.back();
+      showSnackBar('Fail to download');
+    }
+
+  }
+
+  DownloadStatus getStatus(TaskStatus status){
+    DownloadStatus downloadStatus;
+    switch(status){
+      case TaskStatus.enqueued:
+        downloadStatus = DownloadStatus.enqueue;
+        break;
+      case TaskStatus.running:
+        downloadStatus = DownloadStatus.downloading;
+        break;
+      case TaskStatus.complete:
+        downloadStatus = DownloadStatus.complete;
+        break;
+      case TaskStatus.notFound:
+        downloadStatus = DownloadStatus.fail;
+        break;
+      case TaskStatus.failed:
+        downloadStatus = DownloadStatus.fail;
+        break;
+      case TaskStatus.canceled:
+        downloadStatus = DownloadStatus.fail;
+        break;
+      case TaskStatus.waitingToRetry:
+        downloadStatus = DownloadStatus.fail;
+        break;
+      case TaskStatus.paused:
+        downloadStatus = DownloadStatus.pause;
+        break;
+    }
+
+    return downloadStatus;
+
+  }
+
+
 
   resetData(){
     isPanned = false;

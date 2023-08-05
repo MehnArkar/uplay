@@ -1,19 +1,12 @@
 import 'dart:io';
-import 'dart:ui';
-
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:rxdart/rxdart.dart';
 import 'package:uplayer/views/global_ui/progress_bar.dart';
-
 import '../../controllers/player_controller.dart';
-import '../../models/position_data.dart';
 import '../../utils/constants/app_color.dart';
 import '../../utils/constants/app_constant.dart';
 import '../global_ui/animate_background.dart';

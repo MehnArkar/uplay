@@ -3,9 +3,9 @@ PODS:
     - Flutter
   - audio_session (0.0.1):
     - Flutter
-  - Flutter (1.0.0)
-  - flutter_downloader (0.0.1):
+  - background_downloader (0.0.1):
     - Flutter
+  - Flutter (1.0.0)
   - FMDB (2.7.5):
     - FMDB/standard (= 2.7.5)
   - FMDB/standard (2.7.5)
@@ -16,15 +16,15 @@ PODS:
     - FlutterMacOS
   - permission_handler_apple (9.0.4):
     - Flutter
-  - sqflite (0.0.2):
+  - sqflite (0.0.3):
     - Flutter
     - FMDB (>= 2.7.5)
 
 DEPENDENCIES:
   - audio_service (from `.symlinks/plugins/audio_service/ios`)
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
+  - background_downloader (from `.symlinks/plugins/background_downloader/ios`)
   - Flutter (from `Flutter`)
-  - flutter_downloader (from `.symlinks/plugins/flutter_downloader/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
@@ -39,10 +39,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/audio_service/ios"
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
+  background_downloader:
+    :path: ".symlinks/plugins/background_downloader/ios"
   Flutter:
     :path: Flutter
-  flutter_downloader:
-    :path: ".symlinks/plugins/flutter_downloader/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   path_provider_foundation:
@@ -55,13 +55,13 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   audio_service: f509d65da41b9521a61f1c404dd58651f265a567
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
+  background_downloader: 6f55e5548875be2ad4bb91b542558b5be22f339a
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
-  flutter_downloader: b7301ae057deadd4b1650dc7c05375f10ff12c39
   FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
   path_provider_foundation: eaf5b3e458fc0e5fbb9940fb09980e853fe058b8
   permission_handler_apple: 44366e37eaf29454a1e7b1b7d736c2cceaeb17ce
-  sqflite: 6d358c025f5b867b29ed92fc697fd34924e11904
+  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
 
 PODFILE CHECKSUM: 145c8a40d4d52f3b063ba3f210ac4d7136b6cb0b
 

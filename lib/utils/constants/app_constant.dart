@@ -10,6 +10,7 @@ class AppConstants {
   //Hive Database
   static const String boxUserData = 'userData';
   static const String boxLibrary = 'library';
+  static const String boxDownload = 'download';
 
   //Icon
   static const String appIcon = 'assets/icons/appIcon.svg';

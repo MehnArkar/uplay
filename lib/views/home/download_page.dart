@@ -1,11 +1,10 @@
 import 'dart:ui';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:get/get.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:uplayer/controllers/download_controller.dart';
-import 'package:uplayer/models/youtube_video.dart';
+import 'package:uplayer/models/download_data.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import '../../utils/constants/app_constant.dart';
 
@@ -14,8 +13,6 @@ class DownloadPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.find<DownloadController>().getDownloadingTask();
-    Get.find<DownloadController>().resetData();
     return GetBuilder<DownloadController>(
       builder: (downloadController) => Stack(
         alignment: Alignment.topCenter,
@@ -25,35 +22,23 @@ class DownloadPage extends StatelessWidget {
             height: Get.height,
             child: RefreshIndicator(
               onRefresh: () async{
-                await downloadController.getDownloadingTask();
               },
               child: CustomScrollView(
                 controller: downloadController.scrollController,
                 slivers: [
                   SliverPersistentHeader(delegate: TopSpacingHeader()),
                   SliverPersistentHeader(delegate: DownloadStatusBarTitle()),
-                  SliverPadding(
-                    padding: EdgeInsets.only(
-                        left: 25,
-                        right: 25,
-                        top: 25,
-                        bottom: AppConstants.navBarHeight + 25),
-                    sliver: SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                            childCount: downloadController.downloadingTask.length,
-                            (context, index) {
-                      String key = downloadController.downloadingTask.keys.elementAt(index);
-                      DownloadTask currentTask = downloadController.downloadingTask[key]!;
-                      YoutubeVideo? currentVideo;
-                      String? videoId = currentTask.filename?.replaceAll('.mp3', '');
-                      if (downloadController.downloadingVideo.containsKey(videoId)) {
-                        currentVideo = downloadController.downloadingVideo[videoId];
+                  ValueListenableBuilder(
+                      valueListenable: Hive.box<DownloadData>(AppConstants.boxDownload).listenable(),
+                      builder: (context,data,_){
+                        return SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                                    (context, index) => downloadWidget(data.getAt(index)!),
+                                childCount: data.values.length),
+                        );
                       }
-                      return currentVideo == null
-                          ? Container()
-                          : eachDownloadWidget(currentTask, currentVideo);
-                    })),
                   )
+
                 ],
               ),
             ),
@@ -61,6 +46,16 @@ class DownloadPage extends StatelessWidget {
           if (downloadController.isPanned)
             Positioned(left: 0, right: 0, top: 0, child: statusBar())
         ],
+      ),
+    );
+  }
+
+  Widget downloadWidget(DownloadData data){
+    return ListTile(
+      title: Text(data.video.title),
+      subtitle: LinearProgressIndicator(
+        value: data.progress<0?0:data.progress,
+        color: AppColors.primaryColor,
       ),
     );
   }
@@ -102,67 +97,6 @@ class DownloadPage extends StatelessWidget {
     );
   }
 
-  Widget eachDownloadWidget(DownloadTask task, YoutubeVideo video) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      height: Get.width * 0.15,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            width: Get.width * 0.15,
-            height: Get.width * 0.15,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                image: DecorationImage(
-                    image: CachedNetworkImageProvider(video.thumbnails.high ?? ''),
-                    fit: BoxFit.cover)),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-          Expanded(
-              child: SizedBox(
-            height: Get.width * 0.15,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text(
-                  video.title,
-                  style: AppConstants.textStyleMedium,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 2.5,),
-                LinearPercentIndicator(
-                  padding: EdgeInsets.zero,
-                  percent: task.progress/100,
-                  linearGradient: LinearGradient(
-                      colors: [
-                        AppColors.primaryColor.withOpacity(0.5),
-                        AppColors.primaryColor,
-                      ]
-                  ),
-                  backgroundColor: Colors.grey.withOpacity(0.5),
-                  barRadius: const Radius.circular(20),
-
-                )
-                // Container(
-                //   color: Colors.blue,
-                //   child: LinearProgressIndicator(
-                //     value: task.progress / 100,
-                //     color: AppColors.primaryColor,
-                //   ),
-                // )
-              ],
-            ),
-          )),
-        ],
-      ),
-    );
-  }
 }
 
 class TopSpacingHeader extends SliverPersistentHeaderDelegate{

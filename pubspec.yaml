@@ -22,13 +22,14 @@ dependencies:
   rxdart: ^0.27.7
   lottie: ^2.3.2
   marquee: ^2.2.3
-  flutter_downloader: ^1.10.4
   permission_handler: ^10.2.0
   path_provider: ^2.0.15
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   http: ^0.13.6
   percent_indicator: ^4.2.3
+  background_downloader: ^7.8.1
+
 
 
 dev_dependencies:

@@ -64,14 +64,16 @@ class SearchPage extends StatelessWidget {
                     isDownloaded = true;
                   }
                 }
-                return isDownloaded || controller.downloadingVideo.containsKey(video.id) ?
-                const SizedBox() :
-                GestureDetector(
-                    onTap: () {
-                      Get.find<DownloadController>().download(video);
+                return IconButton(
+                    onPressed: () async{
+                      await Get.find<DownloadController>().download(video);
                     },
-                    child: const Icon(
-                      Iconsax.arrow_down_2, color: Colors.grey,));
+                    icon: const Icon(Iconsax.arrow_down_2,color: Colors.grey,));
+                // GestureDetector(
+                //     onTap: () {
+                //     },
+                //     child: const Icon(
+                //       Iconsax.arrow_down_2, color: Colors.grey,));
               }
           ),
         )
