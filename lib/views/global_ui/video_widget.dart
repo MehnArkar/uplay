@@ -26,6 +26,7 @@ class VideoWidget extends StatelessWidget {
               stream: controller.player.playerStateStream,
             builder: (context,snapShot) {
               return ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 25),
               leading: videoThumbnail(controller,snapShot),
               title: Text(
                 video.title,

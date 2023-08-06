@@ -8,24 +8,26 @@ import 'package:uplayer/models/download_status.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/dialog.dart';
-
 import '../utils/log/snap_bar.dart';
 
+enum DownloadSegmente{download,complete}
+
 class DownloadController extends GetxController{
+
   bool isPanned = false;
   //For animation
   double statusBarOpacity = 1;
   double statusBarHeight = 85;
   ScrollController scrollController = ScrollController();
-
   FileDownloader downloader = FileDownloader();
+  DownloadSegmente selectedSegment = DownloadSegmente.download;
 
 
   @override
   void onInit() {
     super.onInit();
     initLoad();
-
+    listenScrollController();
   }
 
   @override
@@ -38,6 +40,22 @@ class DownloadController extends GetxController{
     await downloader.trackTasks();
     await downloader.resumeFromBackground();
     await resumeIncompleteDownload();
+  }
+
+  listenScrollController(){
+    scrollController.addListener(() {
+      if(scrollController.position.pixels>=60){
+        if(!isPanned){
+          isPanned=true;
+          update();
+        }
+      }else{
+        if(isPanned){
+          isPanned=false;
+          update();
+        }
+      }
+    });
   }
 
   listenUpdate(){
@@ -157,7 +175,11 @@ class DownloadController extends GetxController{
 
   }
 
-
+  onDeleteDownload(String id){
+    downloader.cancelTaskWithId(id);
+    downloader.database.deleteRecordWithId(id);
+    Hive.box<DownloadData>(AppConstants.boxDownload).delete(id);
+  }
 
   resetData(){
     isPanned = false;
