@@ -11,6 +11,7 @@ class AppConstants {
   static const String boxUserData = 'userData';
   static const String boxLibrary = 'library';
   static const String boxDownload = 'download';
+  static const String boxDownloadedVideo = 'downloaded_video';
 
   //Icon
   static const String appIcon = 'assets/icons/appIcon.svg';

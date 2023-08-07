@@ -21,5 +21,6 @@ class LocalService{
     await Hive.openBox<UserData>(AppConstants.boxUserData);
     await Hive.openBox<Playlist>(AppConstants.boxLibrary);
     await Hive.openBox<DownloadData>(AppConstants.boxDownload);
+    await Hive.openBox<YoutubeVideo>(AppConstants.boxDownloadedVideo);
   }
 }

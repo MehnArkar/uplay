@@ -10,6 +10,7 @@ import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/global_widgets.dart';
+import 'package:uplayer/views/global_ui/video_widget.dart';
 import 'package:uplayer/views/home/library/playlist_screen.dart';
 import '../../global_ui/app_icon.dart';
 
@@ -23,9 +24,20 @@ class PlaylistPage extends StatelessWidget {
         topPadding(),
         appBarPanel(),
         Expanded(
-            child: playlistPanel()
+            child: allVideoPanel()
         )
       ],
+    );
+  }
+
+  Widget allVideoPanel(){
+    return ValueListenableBuilder(
+        valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).listenable(),
+        builder: (context,box,widget)=>ListView.builder(
+          itemCount: box.values.length,
+          itemBuilder: ( context,index)=>VideoWidget(video: box.getAt(index)!,isOnlineVideo: false,),
+
+        )
     );
   }
 

@@ -74,6 +74,9 @@ class DownloadController extends GetxController{
                   video: existingData.video,
                   url: existingData.url
               ));
+          if(update.status==TaskStatus.complete){
+            Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).put(existingData.video.id, existingData.video);
+          }
       }else if(update is TaskProgressUpdate){
         debugPrint(update.progress.toString());
         downloadBox.put(

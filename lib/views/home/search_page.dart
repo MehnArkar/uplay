@@ -4,6 +4,7 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:uplayer/controllers/download_controller.dart';
 import 'package:uplayer/controllers/search_page_controller.dart';
+import 'package:uplayer/models/download_data.dart';
 import 'package:uplayer/models/playlist.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
@@ -51,32 +52,24 @@ class SearchPage extends StatelessWidget {
 
 
   Widget eachVideoList(YoutubeVideo video){
-    return VideoWidget(
-        video: video,
-        trailingWidget: GetBuilder<DownloadController>(
-          builder:(controller)=> ValueListenableBuilder<Box<Playlist>>(
-              valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
-              builder:(context,box,widget) {
-                bool isDownloaded = false;
-                Playlist? playlist = box.get('Saved Songs');
-                if(playlist!=null){
-                  if((playlist.videoList.where((each) => each.id==video.id)).isNotEmpty){
-                    isDownloaded = true;
-                  }
-                }
-                return IconButton(
-                    onPressed: () async{
+    return GetBuilder<DownloadController>(
+      builder:(controller)=> ValueListenableBuilder<Box<Playlist>>(
+          valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
+          builder:(context,box,widget) {
+            bool isDownloaded = Hive.box<DownloadData>(AppConstants.boxDownload).containsKey(video.id) || Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).containsKey(video.id);
+            return VideoWidget(
+                video: video,
+              trailingWidget: IconButton(
+                  onPressed: () async{
+                    if(!isDownloaded) {
                       await Get.find<DownloadController>().download(video);
-                    },
-                    icon: const Icon(Iconsax.arrow_down_2,color: Colors.grey,));
-                // GestureDetector(
-                //     onTap: () {
-                //     },
-                //     child: const Icon(
-                //       Iconsax.arrow_down_2, color: Colors.grey,));
-              }
-          ),
-        )
+                    }
+                  },
+                  icon: Icon(Iconsax.arrow_down_2,color:isDownloaded?Colors.transparent: Colors.grey,))
+
+            );
+          }
+      ),
     );
   }
 

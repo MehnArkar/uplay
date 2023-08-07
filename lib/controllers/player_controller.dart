@@ -94,6 +94,7 @@ class PlayerController extends GetxController{
             artUri: Uri.parse(video.thumbnails.high??''),
           ),
       );
+
       await player.setAudioSource(source);
     }
 
@@ -156,7 +157,7 @@ class PlayerController extends GetxController{
           return element.audioCodec.contains('mp4');
         }).toList();
         if (m4aStreams.isNotEmpty) {
-          audioUrl = m4aStreams.first.url.toString();
+          audioUrl = m4aStreams.last.url.toString();
         }
       } else {
         audioUrl = audioStreamInfo.first.url.toString();
