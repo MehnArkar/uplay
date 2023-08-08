@@ -14,6 +14,7 @@ import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/utils/log/snap_bar.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
+import 'package:uplayer/views/global_ui/video_widget.dart';
 import '../../../controllers/player_controller.dart';
 import '../../../models/playlist.dart';
 import '../../../utils/constants/app_color.dart';
@@ -179,7 +180,10 @@ class PlaylistScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     controllerPanel(),
-                    Expanded(child: videoListPanel())
+                    if(playlist.name!='Downloaded Songs')
+                      Expanded(child: videoListPanel())
+                    else
+                      Expanded(child: downloadedSongListPanel())
 
                   ],
                 ),
@@ -275,89 +279,6 @@ class PlaylistScreen extends StatelessWidget {
     );
   }
 
-  Widget eachVideo(YoutubeVideo video){
-     return GetBuilder<PlayerController>(
-      builder:(playerController)=> StreamBuilder<PlayerState>(
-          stream: playerController.player.playerStateStream,
-          builder: (context,snapShot) {
-            return GestureDetector(
-              onTap: (){
-                if(playerController.currentVideo?.id!=video.id) {
-                  playerController.playSingle(video, isNetwork: false);
-                }else{
-
-                }
-              },
-              child: Container(
-                padding:const EdgeInsets.symmetric(horizontal: 25),
-                margin:const EdgeInsets.only(bottom: 15),
-                color: Colors.transparent,
-                child: Row(
-                  children: [
-                    Container(
-                        width: Get.width*0.15,
-                        height: Get.width*0.15,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            image: DecorationImage(image: CachedNetworkImageProvider(video.thumbnails.high??''),fit: BoxFit.cover)
-                        ),
-                        child: playerController.currentVideo !=null && playerController.currentVideo!.id ==video.id && (snapShot.data!.processingState!=ProcessingState.completed)?
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(14),
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Positioned.fill(
-                                child: Center(
-                                  child: BackdropFilter(
-                                    filter: ImageFilter.blur(
-                                      sigmaX: 1.0,
-                                      sigmaY: 1.0,
-                                    ),
-                                    child: Container(
-                                      color: Colors.black.withOpacity(0.25),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              playerController.isLoading?
-                              const CupertinoActivityIndicator(color: AppColors.primaryColor,) :
-                              Lottie.asset('assets/lottie/wave.json',)
-                            ],
-                          ),
-                        )
-                            :
-                        Container()
-                    ),
-                    const SizedBox(width: 15,),
-                    Expanded(
-                        child: SizedBox(
-                          height: Get.width*0.15,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // playerController.currentVideo!=null && playerController.currentVideo!.id==video.id?
-                              // Marquee(
-                              //     text: video.title,
-                              //     style: AppConstants.textStyleMedium.copyWith(color: AppColors.primaryColor),
-                              // ):
-                              Text(
-                                video.title,
-                                style: AppConstants.textStyleMedium.copyWith(color: playerController.currentVideo!=null && playerController.currentVideo!.id==video.id && snapShot.data!.processingState!=ProcessingState.completed?AppColors.primaryColor:Colors.white),
-                                maxLines: 1,overflow: TextOverflow.ellipsis,),
-                              Text(video.channelTitle.replaceFirst('VEVO','')??'',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
-
-                            ],),
-                        )),
-                  ],
-                ),
-              ),
-            );
-          }
-      ),
-    );
-  }
 
   Widget videoListPanel(){
     return ValueListenableBuilder<Box<Playlist>>(
@@ -368,9 +289,22 @@ class PlaylistScreen extends StatelessWidget {
               return ListView.builder(
                 padding: EdgeInsets.zero,
                   itemCount: videoList.length,
-                  itemBuilder: (context, index) => eachVideo(videoList[index])
+                  itemBuilder: (context, index) => VideoWidget(video:videoList[index])
               );
             }
+    );
+  }
+
+  Widget downloadedSongListPanel(){
+    return ValueListenableBuilder<Box<YoutubeVideo>>(
+        valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).listenable(),
+        builder:(context,box,widget) {
+          return ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: box.values.length,
+              itemBuilder: (context, index) => VideoWidget(video:box.getAt(index)!)
+          );
+        }
     );
   }
 

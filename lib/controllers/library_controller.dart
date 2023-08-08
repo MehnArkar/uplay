@@ -10,30 +10,30 @@ class LibraryController extends GetxController{
   List<YoutubeVideo> selectedVideos = [];
 
   addNewToPlaylist(String playlistKey,List<YoutubeVideo> video){
-    Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
-    if(libraryBox.containsKey(playlistKey)){
-        Playlist playlist = libraryBox.get(playlistKey)!;
-        playlist.videoList.addAll(video);
-        libraryBox.put(playlistKey, playlist);
-    }else{
-      libraryBox.put(playlistKey, Playlist(name: playlistKey, videoList: video));
-    }
+    // Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
+    // if(libraryBox.containsKey(playlistKey)){
+    //     Playlist playlist = libraryBox.get(playlistKey)!;
+    //     playlist.videoList.addAll(video);
+    //     libraryBox.put(playlistKey, playlist);
+    // }else{
+    //   libraryBox.put(playlistKey, Playlist(name: playlistKey, videoList: video));
+    // }
   }
 
   createNewPlaylist(String playlistName) {
-    if (playlistName.isNotEmpty) {
-      Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
-      Playlist newPlaylist = Playlist(name: playlistName, videoList: []);
-      if (!libraryBox.containsKey(playlistName)) {
-        libraryBox.put(playlistName, newPlaylist);
-        Get.back();
-      } else {
-        showCustomDialog(title: 'Playlist already exist!',
-            contextTitle: '$playlistName already exist in the library.');
-      }
-    }else{
-      Get.back();
-    }
+    // if (playlistName.isNotEmpty) {
+    //   Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
+    //   Playlist newPlaylist = Playlist(name: playlistName, videoList: []);
+    //   if (!libraryBox.containsKey(playlistName)) {
+    //     libraryBox.put(playlistName, newPlaylist);
+    //     Get.back();
+    //   } else {
+    //     showCustomDialog(title: 'Playlist already exist!',
+    //         contextTitle: '$playlistName already exist in the library.');
+    //   }
+    // }else{
+    //   Get.back();
+    // }
   }
 
   deletePlaylist(String playlistName){

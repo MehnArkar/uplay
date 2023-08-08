@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
@@ -22,11 +23,73 @@ class PlaylistPage extends StatelessWidget {
     return Column(
       children: [
         topPadding(),
-        appBarPanel(),
-        Expanded(
-            child: allVideoPanel()
-        )
+        titlePanel(),
+        downloadedSongsPanel(),
+        Expanded(child: playlistPanel())
       ],
+    );
+  }
+
+  Widget titlePanel(){
+    return Container(
+      width: double.maxFinite,
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      alignment: Alignment.centerLeft,
+      child: Text(
+        'Library',
+        style: AppConstants.textStyleTitleLarge.copyWith(color: Colors.white),
+      ),
+    );
+  }
+  
+  Widget downloadedSongsPanel(){
+    return ValueListenableBuilder<Box<YoutubeVideo>>(
+      valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).listenable(),
+      builder:(context,box,_) =>InkWell(
+        onTap: (){
+          Get.to(PlaylistScreen(playlist: Playlist(name: 'Downloaded Songs', videoList: box.values.toList()), coverVideo: box.values.first));
+        },
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
+          child: Container(
+            width: double.maxFinite,
+            padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+            decoration: BoxDecoration(
+              color: AppColors.secondaryColor,
+              borderRadius: BorderRadius.circular(10)
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: Get.width*0.12,
+                  height: Get.width*0.12,
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.circular(10)
+                  ),
+                  child: SvgPicture.asset(AppConstants.appIcon,width: 25,height: 25,),
+                ),
+                const SizedBox(width: 16,),
+                Expanded(
+                  child: SizedBox(
+                    height: Get.width*0.12,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                          Text('Downloaded Songs',style: AppConstants.textStyleMedium,),
+                          Text('${box.values.length} Songs',style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),)
+                    ],),
+                  ),
+                ),
+                const SizedBox(width: 16,),
+                const Icon(Icons.arrow_forward_ios_rounded,color: Colors.grey,size: 18,)
+              ],
+            )
+          )
+        ),
+      ),
     );
   }
 
@@ -42,29 +105,44 @@ class PlaylistPage extends StatelessWidget {
   }
 
   Widget playlistPanel(){
-    return ValueListenableBuilder(
-      valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
-      builder:(context,box,widget)=> GridView.builder(
-        gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 1/1.3,crossAxisSpacing: 25,mainAxisSpacing: 25),
-        itemCount: box.length,
-        padding: EdgeInsets.only(left: 25,right: 25,top: 25,bottom: 25+AppConstants.navBarHeight),
-        itemBuilder: (context,index)=>eachPlaylist(box.getAt(index)!),
-      ),
-    );
+    return
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25.0),
+        child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('Playlist',style: AppConstants.textStyleTitleMedium,),
+              const SizedBox(width: 16,),
+              const Icon(Iconsax.add_circle,color: AppColors.secondaryColor,)
+            ],
+          ),
+          ValueListenableBuilder<Box<Playlist>>(
+            valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
+            builder:(context,box,_)=>
+                Expanded(
+                child:box.values.isNotEmpty?
+                GridView.builder(
+                    padding: EdgeInsets.zero,
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,mainAxisSpacing: 16,childAspectRatio: 1/1.2),
+                    itemBuilder: (context,index)=>eachPlaylist(box.getAt(index)!)):
+                Center(
+                  child: Text('No Playlist',style: AppConstants.textStyleTitleMedium.copyWith(color: Colors.grey),),
+                )
+            ),
+          )
+        ],
+    ),
+      );
   }
 
 
 
   Widget eachPlaylist(Playlist playlist){
-    YoutubeVideo? coverVideo;
-    if(playlist.videoList.isNotEmpty) {
-      Random random = Random();
-      int randomInt = random.nextInt(playlist.videoList.length);
-      coverVideo = playlist.videoList[randomInt];
-    }
     return GestureDetector(
       onTap: (){
-        Get.to(PlaylistScreen(playlist: playlist,coverVideo: coverVideo,));
+        Get.to(PlaylistScreen(playlist: playlist,coverVideo: playlist.videoList.first,));
       },
       onLongPress:(){
         Get.find<LibraryController>().deletePlaylist(playlist.name);
@@ -81,7 +159,7 @@ class PlaylistPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15),
                       image:playlist.videoList.isNotEmpty?
                       DecorationImage(
-                          image:CachedNetworkImageProvider(playlist.videoList.isNotEmpty?coverVideo!.thumbnails.high:'',),
+                          image:CachedNetworkImageProvider(playlist.videoList.isNotEmpty?playlist.videoList.first.thumbnails.high:'',),
                           fit: BoxFit.cover):
                       const DecorationImage(image: AssetImage('assets/images/place_holder.png'))
                   ),
