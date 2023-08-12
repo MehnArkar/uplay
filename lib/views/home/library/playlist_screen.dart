@@ -180,10 +180,7 @@ class PlaylistScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     controllerPanel(),
-                    if(playlist.name!='Downloaded Songs')
-                      Expanded(child: videoListPanel())
-                    else
-                      Expanded(child: downloadedSongListPanel())
+                    Expanded(child: videoListPanel())
 
                   ],
                 ),
@@ -294,19 +291,7 @@ class PlaylistScreen extends StatelessWidget {
             }
     );
   }
-
-  Widget downloadedSongListPanel(){
-    return ValueListenableBuilder<Box<YoutubeVideo>>(
-        valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).listenable(),
-        builder:(context,box,widget) {
-          return ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: box.values.length,
-              itemBuilder: (context, index) => VideoWidget(video:box.getAt(index)!)
-          );
-        }
-    );
-  }
+  
 
   showAddSongSheet(){
     TextEditingController txtSearch = TextEditingController();

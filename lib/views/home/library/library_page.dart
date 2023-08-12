@@ -12,6 +12,7 @@ import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/global_widgets.dart';
 import 'package:uplayer/views/global_ui/video_widget.dart';
+import 'package:uplayer/views/home/library/downloaded_playlist_screen.dart';
 import 'package:uplayer/views/home/library/playlist_screen.dart';
 import '../../global_ui/app_icon.dart';
 
@@ -47,7 +48,7 @@ class PlaylistPage extends StatelessWidget {
       valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).listenable(),
       builder:(context,box,_) =>InkWell(
         onTap: (){
-          Get.to(PlaylistScreen(playlist: Playlist(name: 'Downloaded Songs', videoList: box.values.toList()), coverVideo: box.values.first));
+          Get.to(const DownloadedPlaylistScreen());
         },
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25,vertical: 25),
@@ -114,8 +115,8 @@ class PlaylistPage extends StatelessWidget {
           Row(
             children: [
               Text('Playlist',style: AppConstants.textStyleTitleMedium,),
-              const SizedBox(width: 16,),
-              const Icon(Iconsax.add_circle,color: AppColors.secondaryColor,)
+              const Spacer(),
+              const Icon(Iconsax.add_circle,color:Colors.grey,)
             ],
           ),
           ValueListenableBuilder<Box<Playlist>>(
@@ -128,7 +129,14 @@ class PlaylistPage extends StatelessWidget {
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,mainAxisSpacing: 16,childAspectRatio: 1/1.2),
                     itemBuilder: (context,index)=>eachPlaylist(box.getAt(index)!)):
                 Center(
-                  child: Text('No Playlist',style: AppConstants.textStyleTitleMedium.copyWith(color: Colors.grey),),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Iconsax.music_playlist,size: 60,color: Colors.grey.withOpacity(0.5),),
+                      const SizedBox(height: 25,),
+                      Text('No Playlist',style: AppConstants.textStyleTitleMedium.copyWith(color: Colors.grey.withOpacity(0.5)),),
+                    ],
+                  ),
                 )
             ),
           )

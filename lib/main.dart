@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -13,7 +14,6 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   //Set delay for responsive
   await Future.delayed(const Duration(milliseconds: 1000));
-  
 
   //initializ JustAudio
   await JustAudioBackground.init(
@@ -40,6 +40,12 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+        const SystemUiOverlayStyle(
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
+        )
+    );
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Uplay',
