@@ -7,6 +7,7 @@ import 'package:iconsax/iconsax.dart';
 import 'package:uplayer/controllers/home_controller.dart';
 import 'package:uplayer/utils/constants/app_color.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
+import 'package:uplayer/views/global_ui/app_background.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
 import 'package:uplayer/views/home/search_page.dart';
 import 'package:uplayer/views/home/home_page.dart';
@@ -36,7 +37,7 @@ class HomeMainPage extends StatelessWidget {
     return Stack(
       alignment: Alignment.center,
       children: [
-        const AnimateBackground(),
+        const AppBackground(),
         shownPage(),
         Align(
           alignment: Alignment.bottomCenter,

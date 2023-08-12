@@ -188,8 +188,8 @@ class PlayerBottomSheet extends StatelessWidget {
               IconButton(
                   onPressed: playerController.player.hasNext?
                       (){
-                    playerController.player.seek(Duration(seconds: playerController.player.position.inSeconds+15),index: playerController.player.currentIndex);
-                    // playerController.player.seekToNext();
+                    // playerController.player.seek(Duration(seconds: playerController.player.position.inSeconds+15),index: playerController.player.currentIndex);
+                    playerController.player.seekToNext();
                   }:null,
                   color: Colors.white,
                   disabledColor: Colors.grey,

@@ -29,6 +29,7 @@ dependencies:
   http: ^0.13.6
   percent_indicator: ^4.2.3
   background_downloader: ^7.8.1
+  blobs: ^2.0.0
 
 
 

@@ -100,7 +100,6 @@ class PlaylistPage extends StatelessWidget {
         builder: (context,box,widget)=>ListView.builder(
           itemCount: box.values.length,
           itemBuilder: ( context,index)=>VideoWidget(video: box.getAt(index)!,isOnlineVideo: false,),
-
         )
     );
   }
