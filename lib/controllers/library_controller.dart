@@ -1,11 +1,14 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import '../models/playlist.dart';
+import '../views/global_ui/dialog.dart';
 
 class LibraryController extends GetxController{
 
+  TextEditingController txtPlaylistName = TextEditingController();
   List<YoutubeVideo> selectedVideos = [];
 
   addNewToPlaylist(String playlistKey,List<YoutubeVideo> video){
@@ -19,20 +22,16 @@ class LibraryController extends GetxController{
     // }
   }
 
-  createNewPlaylist(String playlistName) {
-    // if (playlistName.isNotEmpty) {
-    //   Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
-    //   Playlist newPlaylist = Playlist(name: playlistName, videoList: []);
-    //   if (!libraryBox.containsKey(playlistName)) {
-    //     libraryBox.put(playlistName, newPlaylist);
-    //     Get.back();
-    //   } else {
-    //     showCustomDialog(title: 'Playlist already exist!',
-    //         contextTitle: '$playlistName already exist in the library.');
-    //   }
-    // }else{
-    //   Get.back();
-    // }
+  createNewPlaylist() async{
+      Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
+      Playlist newPlaylist = Playlist(name: txtPlaylistName.text.trim(), videoList:selectedVideos);
+      if (!libraryBox.containsKey(txtPlaylistName.text.trim())) {
+        await libraryBox.put(txtPlaylistName.text.trim(), newPlaylist);
+        Get.back();
+      } else {
+        showCustomDialog(title: 'Playlist already exist!',
+            contextTitle: '${txtPlaylistName.text.trim()} already exist in the library.');
+      }
   }
 
   deletePlaylist(String playlistName){
