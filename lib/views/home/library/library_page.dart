@@ -14,7 +14,6 @@ import 'package:uplayer/views/global_ui/global_widgets.dart';
 import 'package:uplayer/views/global_ui/video_widget.dart';
 import 'package:uplayer/views/home/library/downloaded_playlist_screen.dart';
 import 'package:uplayer/views/home/library/playlist_screen.dart';
-import '../../global_ui/app_icon.dart';
 
 class PlaylistPage extends StatelessWidget {
   const PlaylistPage({Key? key}) : super(key: key);
@@ -47,7 +46,7 @@ class PlaylistPage extends StatelessWidget {
     return ValueListenableBuilder<Box<YoutubeVideo>>(
       valueListenable: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).listenable(),
       builder:(context,box,_) =>InkWell(
-        onTap: (){
+        onTap: () async{
           Get.to(const DownloadedPlaylistScreen());
         },
         child: Padding(
@@ -105,8 +104,7 @@ class PlaylistPage extends StatelessWidget {
   }
 
   Widget playlistPanel(){
-    return
-      Padding(
+    return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 25.0),
         child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,6 +115,7 @@ class PlaylistPage extends StatelessWidget {
             builder:(context,box,_)=>
                 Expanded(
                     child: GridView.builder(
+                        shrinkWrap: true,
                         padding:  EdgeInsets.only(top: 25,bottom: AppConstants.navBarHeight+25),
                         gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,childAspectRatio: 1/1.35,mainAxisSpacing: 25,crossAxisSpacing: 25),
                         itemCount: box.values.length+1,
@@ -305,8 +304,8 @@ class PlaylistPage extends StatelessWidget {
                         minimumSize: const Size(double.infinity, 60)
                       ),
                         onPressed:controller.txtPlaylistName.text.isNotEmpty && controller.selectedVideos.isNotEmpty?
-                            (){
-                        controller.createNewPlaylist();
+                            ()async{
+                        await controller.createNewPlaylist();
                             }:null,
                         child: Text('Create',style: AppConstants.textStyleTitleMedium.copyWith(color: Colors.white),)),
 

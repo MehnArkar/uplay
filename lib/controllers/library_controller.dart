@@ -23,10 +23,10 @@ class LibraryController extends GetxController{
   }
 
   createNewPlaylist() async{
-      Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
-      Playlist newPlaylist = Playlist(name: txtPlaylistName.text.trim(), videoList:selectedVideos);
+      Box<Playlist> libraryBox =  Hive.box<Playlist>(AppConstants.boxLibrary);
+      Playlist newPlaylist = Playlist(name: txtPlaylistName.text.trim(), videoList: selectedVideos,);
       if (!libraryBox.containsKey(txtPlaylistName.text.trim())) {
-        await libraryBox.put(txtPlaylistName.text.trim(), newPlaylist);
+        await libraryBox.put(newPlaylist.name, newPlaylist);
         Get.back();
       } else {
         showCustomDialog(title: 'Playlist already exist!',
