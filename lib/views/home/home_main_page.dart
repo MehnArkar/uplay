@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:uplayer/controllers/home_controller.dart';
@@ -13,7 +12,6 @@ import 'package:uplayer/views/home/search_page.dart';
 import 'package:uplayer/views/home/home_page.dart';
 import 'package:uplayer/views/home/library/library_page.dart';
 import 'package:uplayer/views/home/download_page.dart';
-import '../global_ui/animate_background.dart';
 import '../player/mini_player_controll.dart';
 
 class HomeMainPage extends StatelessWidget {
@@ -60,7 +58,7 @@ class HomeMainPage extends StatelessWidget {
      case NavBar.home:
        return const HomePage();
      case NavBar.playlist:
-       return const PlaylistPage();
+       return const LibraryPage();
      case NavBar.download:
        return const SearchPage();
      case NavBar.profile:

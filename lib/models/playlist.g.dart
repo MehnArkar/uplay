@@ -18,7 +18,7 @@ class PlaylistAdapter extends TypeAdapter<Playlist> {
     };
     return Playlist(
       name: fields[0] as String,
-      videoList: (fields[1] as List).cast<YoutubeVideo>(),
+      videoList: (fields[1] as List).cast<String>(),
     );
   }
 

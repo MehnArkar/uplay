@@ -8,8 +8,6 @@ import '../views/global_ui/dialog.dart';
 
 class LibraryController extends GetxController{
 
-  TextEditingController txtPlaylistName = TextEditingController();
-  List<YoutubeVideo> selectedVideos = [];
 
   addNewToPlaylist(String playlistKey,List<YoutubeVideo> video){
     // Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
@@ -22,15 +20,14 @@ class LibraryController extends GetxController{
     // }
   }
 
-  createNewPlaylist() async{
+  createNewPlaylist(Playlist playlist) async{
       Box<Playlist> libraryBox =  Hive.box<Playlist>(AppConstants.boxLibrary);
-      Playlist newPlaylist = Playlist(name: txtPlaylistName.text.trim(), videoList: selectedVideos,);
-      if (!libraryBox.containsKey(txtPlaylistName.text.trim())) {
-        await libraryBox.put(newPlaylist.name, newPlaylist);
+      if (!libraryBox.containsKey(playlist.name)) {
+        await libraryBox.put(playlist.name,playlist);
         Get.back();
       } else {
         showCustomDialog(title: 'Playlist already exist!',
-            contextTitle: '${txtPlaylistName.text.trim()} already exist in the library.');
+            contextTitle: '${playlist.name} already exist in the library.');
       }
   }
 

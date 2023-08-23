@@ -13,7 +13,7 @@ dependencies:
   get: ^4.6.5
   flutter_svg: ^1.1.6
   cached_network_image: ^3.2.3
-  youtube_explode_dart: ^1.12.4
+  youtube_explode_dart: ^2.0.2
   just_audio: ^0.9.34
   iconsax: ^0.0.8
   shimmer: ^3.0.0
@@ -26,7 +26,7 @@ dependencies:
   path_provider: ^2.0.15
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  http: ^0.13.6
+  http: ^1.1.0
   percent_indicator: ^4.2.3
   background_downloader: ^7.8.1
   blobs: ^2.0.0

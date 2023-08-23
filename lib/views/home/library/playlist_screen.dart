@@ -4,11 +4,8 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:lottie/lottie.dart';
 import 'package:uplayer/controllers/library_controller.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
@@ -21,8 +18,7 @@ import '../../../utils/constants/app_color.dart';
 
 class PlaylistScreen extends StatelessWidget {
   final Playlist playlist;
-  final YoutubeVideo? coverVideo;
-  const PlaylistScreen({Key? key,required this.playlist, required this.coverVideo}) : super(key: key);
+  const PlaylistScreen({Key? key,required this.playlist}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -43,23 +39,11 @@ class PlaylistScreen extends StatelessWidget {
                 child: bodyWidget())
           ],
         )
-
-
-    //     child: ValueListenableBuilder<Box<Playlist>>(
-    //         valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys:[playlist.name]),
-    //         builder:(context,box,widget) {
-    //           Playlist? currentPlaylist = box.get(playlist.name);
-    //           List<YoutubeVideo> videoList = currentPlaylist!.videoList;
-    //           return ListView.builder(
-    //               itemCount: videoList.length,
-    //               itemBuilder: (context, index) => eachVideo(videoList[index])
-    //           );
-    //         }
-    // )
     );
   }
 
   Widget topPanel(){
+    YoutubeVideo coverVideo = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(playlist.videoList.first)!;
     return ClipRRect(
       child: Stack(
         alignment: Alignment.topCenter,
@@ -69,7 +53,7 @@ class PlaylistScreen extends StatelessWidget {
             height: Get.height*0.25,
             decoration: BoxDecoration(
               color: Colors.black,
-              image: DecorationImage(image: CachedNetworkImageProvider(coverVideo!=null?coverVideo!.thumbnails.high??'':''),fit: BoxFit.cover),
+              image: DecorationImage(image: CachedNetworkImageProvider(coverVideo.thumbnails.high),fit: BoxFit.cover),
             ),
           ),
           Positioned.fill(
@@ -124,6 +108,19 @@ class PlaylistScreen extends StatelessWidget {
                           itemBuilder: (context){
                             return [
                               PopupMenuItem(
+                                  onTap: () async{
+                                    await Future.delayed(const Duration(milliseconds: 100));
+                                    showAddSongSheet();
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Iconsax.music,color: Colors.white,size: 20,),
+                                      const SizedBox(width: 10,),
+                                      Text('Add new',style: AppConstants.textStyleMedium.copyWith(color: Colors.white),),
+                                    ],
+                                  )),
+                              PopupMenuItem(
                                   onTap: (){
                                     Get.back();
                                     Get.find<LibraryController>().deletePlaylist(playlist.name);
@@ -136,18 +133,9 @@ class PlaylistScreen extends StatelessWidget {
                                       const SizedBox(width: 10,),
                                       Text('Delete',style: AppConstants.textStyleMedium.copyWith(color: Colors.red),),
                                     ],
-                                  ))
+                                  )),
                             ];
                           })
-                      // Container(
-                      //   padding:const EdgeInsets.all(8),
-                      //   alignment: Alignment.center,
-                      //   decoration: BoxDecoration(
-                      //       shape: BoxShape.circle,
-                      //       color: Colors.black.withOpacity(0.2)
-                      //   ),
-                      //   child:const Icon(Icons.more_vert_rounded,size: 20,color: Colors.white,),
-                      // ),
                     ],
                   ),
                   const SizedBox(height: 10,),
@@ -175,11 +163,11 @@ class PlaylistScreen extends StatelessWidget {
                 height: Get.height-(Get.height*0.25-(Get.width*0.15/2)),
                 decoration: BoxDecoration(
                     color: AppColors.secondaryColor,
-                    borderRadius:  BorderRadius.only(topLeft: Radius.circular(Get.width*0.25/2),topRight:  Radius.circular(Get.width*0.25/2),)
+                    borderRadius:  BorderRadius.only(topRight:  Radius.circular(Get.width*0.25/2),)
                 ),
                 child: Column(
                   children: [
-                    controllerPanel(),
+                    SizedBox(height: Get.width*0.15/2+16,),
                     Expanded(child: videoListPanel())
 
                   ],
@@ -191,123 +179,104 @@ class PlaylistScreen extends StatelessWidget {
         ),
         Positioned(
             top: Get.height*0.25-(Get.width*0.15),
-            child: GestureDetector(
-              onTap: (){
-                Get.find<PlayerController>().playMulti(playlist.videoList);
-              },
-              child: Container(
-                width: Get.width*0.15,
-                height: Get.width*0.15,
-                decoration:const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primaryColor
+            left: 25,
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: (){
+                      Playlist currentPlaylist = Hive.box<Playlist>(AppConstants.boxLibrary).get(playlist.name)!;
+                      List<YoutubeVideo> videoList = [];
+                      for(int i=0;i<currentPlaylist.videoList.length;i++){
+                        YoutubeVideo? video = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(currentPlaylist.videoList[i]);
+                        if(video!=null){
+                          videoList.add(video);
+                        }
+                      }
+                      Get.find<PlayerController>().playMulti(videoList);
+                  },
+                  child: Container(
+                    width: Get.width*0.15,
+                    height: Get.width*0.15,
+                    decoration:const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.primaryColor
+                    ),
+                    child:const Icon(Iconsax.play5,color: Colors.white,),
+                  ),
                 ),
-                child:const Icon(Iconsax.play5,color: Colors.white,),
-              ),
+                const SizedBox(width: 25,),
+                GetBuilder<PlayerController>(
+                  builder:(playerController)=> GestureDetector(
+                    onTap: (){
+                      bool isShuffle = playerController.player.shuffleModeEnabled;
+                      playerController.player.setShuffleModeEnabled(isShuffle?false:true);
+                    },
+                    child: StreamBuilder<bool>(
+                        stream: playerController.player.shuffleModeEnabledStream,
+                        builder: (context,shapShot) {
+                          bool isShuffel = shapShot.data??false;
+                          return Container(
+                            padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 20),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                                color: isShuffel?AppColors.primaryColor:Colors.transparent,
+                                borderRadius: BorderRadius.circular(100),
+                                border: Border.all(color:isShuffel?AppColors.primaryColor: Colors.white)
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Iconsax.shuffle,color: Colors.white,),
+                                const SizedBox(width: 10,),
+                                Text('Shuffle',style: AppConstants.textStyleMedium,),
+                              ],
+                            ),
+                          );
+                        }
+                    ),
+                  ),
+                )
+              ],
             ))
       ],
     );
   }
-  
-  Widget controllerPanel(){
-    PlayerController playerController = Get.find();
-    return Padding(
-      padding:const  EdgeInsets.only(left: 25,right: 25,top: 25,bottom: 25),
-      child: Row(
-        children: [
-          Expanded(
-              child: GestureDetector(
-                onTap: (){
-                  bool isShuffle = playerController.player.shuffleModeEnabled;
-                  playerController.player.setShuffleModeEnabled(isShuffle?false:true);
-                },
-                child: StreamBuilder<bool>(
-                  stream: playerController.player.shuffleModeEnabledStream,
-                  builder: (context,shapShot) {
-                    bool isShuffel = shapShot.data??false;
-                    return Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: isShuffel?AppColors.primaryColor:Colors.transparent,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color:isShuffel?AppColors.primaryColor: Colors.white)
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Iconsax.shuffle,color: Colors.white,),
-                          const SizedBox(width: 10,),
-                          Text('Shuffle',style: AppConstants.textStyleMedium,),
-                        ],
-                      ),
-                    );
-                  }
-                ),
-              )
-          ),
-          SizedBox(width: Get.width*0.15+30,),
-          Expanded(
-              child: GestureDetector(
-                onTap: (){
-                    showAddSongSheet();
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Colors.transparent,
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: Colors.white)
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Iconsax.add,color: Colors.white,),
-                      const SizedBox(width: 5,),
-                      Text('Add Song',style: AppConstants.textStyleMedium,),
-                    ],
-                  ),
-                ),
-              )
-          ),
-        ],
-      ),
-    );
-  }
+
 
 
   Widget videoListPanel(){
     return ValueListenableBuilder<Box<Playlist>>(
             valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys:[playlist.name]),
             builder:(context,box,widget) {
-              Playlist? currentPlaylist = box.get(playlist.name);
-              List<YoutubeVideo> videoList = currentPlaylist!.videoList;
+              Playlist currentPlaylist = box.get(playlist.name)!;
               return ListView.builder(
                 padding: EdgeInsets.zero,
-                  itemCount: videoList.length,
-                  itemBuilder: (context, index) => VideoWidget(video:videoList[index])
+                  itemCount: currentPlaylist.videoList.length,
+                  itemBuilder: (context, index){
+                  YoutubeVideo? video = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(currentPlaylist.videoList[index]);
+                  return video==null?Container():VideoWidget(video:video,isOnlineVideo: false,);
+                }
               );
             }
     );
   }
-  
+
 
   showAddSongSheet(){
     TextEditingController txtSearch = TextEditingController();
+    List<YoutubeVideo> allVideo = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).values.toList();
     showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.red,
         shape:const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
         ),
         builder: (ctx){
           return SizedBox(
-              width: Get.width,
-              height: Get.height*0.9,
-              child: GetBuilder<LibraryController>(
-                builder:(libraryController)=> Container(
+            width: Get.width,
+            height: Get.height*0.9,
+              child:  Container(
                   padding:const EdgeInsets.symmetric(horizontal: 25,),
                   decoration:const BoxDecoration(
                       color: AppColors.secondaryColor,
@@ -346,26 +315,17 @@ class PlaylistScreen extends StatelessWidget {
                       const SizedBox(height: 15,),
                       Expanded(
                           child:ValueListenableBuilder<Box<Playlist>>(
-                              valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys: ['Saved Songs']),
+                              valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
                               builder: (context,box,widget){
-                                List<YoutubeVideo> allSongs = [];
-                                Playlist? playlist = box.get('Saved Songs');
-                                if(playlist!=null){
-                                 allSongs = playlist.videoList;
-                                }
+                                List<String> currenIdList = box.get(playlist.name)!.videoList;
                                 return CupertinoScrollbar(
                                   child: ListView.builder(
-                                      itemCount: allSongs.length,
+                                      itemCount: allVideo.length,
                                       itemBuilder: (context,index){
-                                        YoutubeVideo currentVideo = allSongs[index];
+                                        YoutubeVideo currentVideo = allVideo[index];
                                         return ListTile(
                                           onTap: (){
-                                            if(libraryController.selectedVideos.contains(currentVideo)){
-                                              libraryController.selectedVideos.remove(currentVideo);
-                                            }else {
-                                              libraryController.selectedVideos.add(currentVideo);
-                                            }
-                                            libraryController.update();
+
                                           },
                                           leading: Container(
                                             width: Get.width*0.15,
@@ -375,9 +335,9 @@ class PlaylistScreen extends StatelessWidget {
                                                 image: DecorationImage(image: CachedNetworkImageProvider(currentVideo.thumbnails.high??''),fit: BoxFit.cover)
                                             ),
                                           ),
-                                          title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: libraryController.selectedVideos.contains(currentVideo)?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                                          title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: currenIdList.contains(currentVideo.id)?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
                                           subtitle: Text(currentVideo.channelTitle,style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),),
-                                          trailing: Icon(Icons.check,color:libraryController.selectedVideos.contains(currentVideo)? AppColors.primaryColor:Colors.transparent,)
+                                          trailing: Icon(Icons.check,color:currenIdList.contains(currentVideo.id)? AppColors.primaryColor:Colors.transparent,)
                                         );
                                       }),
                                 );
@@ -385,8 +345,7 @@ class PlaylistScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 15,),
                       ElevatedButton(
-                          onPressed:libraryController.selectedVideos.isEmpty?null:
-                              (){},
+                          onPressed: (){},
                           style: ElevatedButton.styleFrom(
                             minimumSize:const Size(double.maxFinite, 50),
                             disabledBackgroundColor: AppColors.colorTextField,
@@ -399,7 +358,7 @@ class PlaylistScreen extends StatelessWidget {
                     ],
                   ),
             ),
-              ),
+
           );
         });
   }

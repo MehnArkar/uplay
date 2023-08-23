@@ -118,6 +118,7 @@ class DownloadController extends GetxController{
   download(YoutubeVideo video) async{
     showLoadingDialog();
     String url = await Get.find<PlayerController>().getUrl(video);
+    print(url);
     DownloadTask task = DownloadTask(
       url: url,
       filename: '${video.id}.mp3',
