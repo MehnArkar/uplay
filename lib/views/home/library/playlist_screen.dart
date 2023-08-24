@@ -43,7 +43,7 @@ class PlaylistScreen extends StatelessWidget {
   }
 
   Widget topPanel(){
-    YoutubeVideo coverVideo = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(playlist.videoList.first)!;
+    YoutubeVideo? coverVideo =playlist.videoList.isEmpty?null: Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(playlist.videoList.first)!;
     return ClipRRect(
       child: Stack(
         alignment: Alignment.topCenter,
@@ -53,7 +53,8 @@ class PlaylistScreen extends StatelessWidget {
             height: Get.height*0.25,
             decoration: BoxDecoration(
               color: Colors.black,
-              image: DecorationImage(image: CachedNetworkImageProvider(coverVideo.thumbnails.high),fit: BoxFit.cover),
+              image:coverVideo!=null?
+              DecorationImage(image: CachedNetworkImageProvider(coverVideo.thumbnails.high),fit: BoxFit.cover) : const DecorationImage(image: AssetImage('assets/images/place_holder.png'),fit: BoxFit.cover),
             ),
           ),
           Positioned.fill(
@@ -249,22 +250,44 @@ class PlaylistScreen extends StatelessWidget {
             valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys:[playlist.name]),
             builder:(context,box,widget) {
               Playlist currentPlaylist = box.get(playlist.name)!;
-              return ListView.builder(
+              return currentPlaylist.videoList.isNotEmpty? ListView.builder(
                 padding: EdgeInsets.zero,
                   itemCount: currentPlaylist.videoList.length,
                   itemBuilder: (context, index){
                   YoutubeVideo? video = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(currentPlaylist.videoList[index]);
-                  return video==null?Container():VideoWidget(video:video,isOnlineVideo: false,);
+                  return video==null?Container():
+                  Dismissible(
+                      key: Key(video.id),
+                      onDismissed: (_){
+                        Get.find<LibraryController>().deleteVideoFromPlaylist(playlist.name, video.id);
+                      },
+                      child: VideoWidget(video:video,isOnlineVideo: false,));
                 }
-              );
+              ):InkWell(
+                onTap: (){
+                  showAddSongSheet();
+                },
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Iconsax.add_circle,size: 60,color: Colors.grey.withOpacity(0.5),),
+                      const SizedBox(height: 25,),
+                      Text('Add songs',style: AppConstants.textStyleTitleMedium.copyWith(color: Colors.grey.withOpacity(0.5)),)
+
+                    ],
+                  ),
+                ),
+              ) ;
             }
     );
   }
 
 
   showAddSongSheet(){
-    TextEditingController txtSearch = TextEditingController();
+    // TextEditingController txtSearch = TextEditingController();
     List<YoutubeVideo> allVideo = Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).values.toList();
+    List<String> selectedVideosID = [];
     showModalBottomSheet(
         context: Get.context!,
         isScrollControlled: true,
@@ -273,92 +296,108 @@ class PlaylistScreen extends StatelessWidget {
             borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
         ),
         builder: (ctx){
-          return SizedBox(
-            width: Get.width,
-            height: Get.height*0.9,
-              child:  Container(
-                  padding:const EdgeInsets.symmetric(horizontal: 25,),
-                  decoration:const BoxDecoration(
-                      color: AppColors.secondaryColor,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 15,),
-                      Center(
-                        child: Container(
-                          width: Get.width*0.15,
-                          height: 5,
-                          decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(2.5)
+          return StatefulBuilder(
+            builder: (context,rebuild) {
+              return SizedBox(
+                width: Get.width,
+                height: Get.height*0.9,
+                  child:  Container(
+                      padding:const EdgeInsets.symmetric(horizontal: 25,),
+                      decoration:const BoxDecoration(
+                          color: AppColors.secondaryColor,
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(25),topRight: Radius.circular(25))
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 15,),
+                          Center(
+                            child: Container(
+                              width: Get.width*0.15,
+                              height: 5,
+                              decoration: BoxDecoration(
+                                color: Colors.grey,
+                                borderRadius: BorderRadius.circular(2.5)
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
-                      const SizedBox(height: 10,),
-                      Text('Add new',style: AppConstants.textStyleTitleMedium,),
-                      const SizedBox(height: 15,),
-                      TextField(
-                        controller: txtSearch,
-                        decoration: InputDecoration(
-                          contentPadding:const EdgeInsets.only(left: 15,right: 15,bottom: 10),
-                          hintText: 'Search',
-                          hintStyle: AppConstants.textStyleMedium.copyWith(color: Colors.grey,fontWeight: FontWeight.normal),
-                          fillColor: AppColors.colorTextField,
-                          filled: true,
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
-                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
-                          enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
-                        ),
-                      ),
-                      const SizedBox(height: 15,),
-                      Expanded(
-                          child:ValueListenableBuilder<Box<Playlist>>(
-                              valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(),
-                              builder: (context,box,widget){
-                                List<String> currenIdList = box.get(playlist.name)!.videoList;
-                                return CupertinoScrollbar(
-                                  child: ListView.builder(
-                                      itemCount: allVideo.length,
-                                      itemBuilder: (context,index){
-                                        YoutubeVideo currentVideo = allVideo[index];
-                                        return ListTile(
-                                          onTap: (){
+                          const SizedBox(height: 10,),
+                          Text('Add new',style: AppConstants.textStyleTitleMedium,),
+                          const SizedBox(height: 15,),
+                          // TextField(
+                          //   controller: txtSearch,
+                          //   decoration: InputDecoration(
+                          //     contentPadding:const EdgeInsets.only(left: 15,right: 15,bottom: 10),
+                          //     hintText: 'Search',
+                          //     hintStyle: AppConstants.textStyleMedium.copyWith(color: Colors.grey,fontWeight: FontWeight.normal),
+                          //     fillColor: AppColors.colorTextField,
+                          //     filled: true,
+                          //     border: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
+                          //     focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
+                          //     enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(100),borderSide:const BorderSide(color:AppColors.colorTextField)),
+                          //   ),
+                          // ),
+                          // const SizedBox(height: 15,),
+                          Expanded(
+                              child:ValueListenableBuilder<Box<Playlist>>(
+                                  valueListenable: Hive.box<Playlist>(AppConstants.boxLibrary).listenable(keys: [playlist.name]),
+                                  builder: (context,box,widget){
+                                    List<String> currenIdList = box.get(playlist.name)!.videoList;
+                                    return CupertinoScrollbar(
+                                      child: ListView.builder(
+                                          itemCount: allVideo.length,
+                                          itemBuilder: (context,index){
+                                            YoutubeVideo currentVideo = allVideo[index];
+                                            return ListTile(
+                                              onTap: (){
+                                                rebuild((){
+                                                  if(!currenIdList.contains(currentVideo.id)){
+                                                    if(selectedVideosID.contains(currentVideo.id)){
+                                                      selectedVideosID.remove(currentVideo.id);
+                                                    }else{
+                                                      selectedVideosID.add(currentVideo.id);
+                                                    }
+                                                  }
+                                                });
 
-                                          },
-                                          leading: Container(
-                                            width: Get.width*0.15,
-                                            height: Get.width*0.15,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(15),
-                                                image: DecorationImage(image: CachedNetworkImageProvider(currentVideo.thumbnails.high??''),fit: BoxFit.cover)
-                                            ),
-                                          ),
-                                          title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: currenIdList.contains(currentVideo.id)?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
-                                          subtitle: Text(currentVideo.channelTitle,style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),),
-                                          trailing: Icon(Icons.check,color:currenIdList.contains(currentVideo.id)? AppColors.primaryColor:Colors.transparent,)
-                                        );
-                                      }),
-                                );
-                              })
-                      ),
-                      const SizedBox(height: 15,),
-                      ElevatedButton(
-                          onPressed: (){},
-                          style: ElevatedButton.styleFrom(
-                            minimumSize:const Size(double.maxFinite, 50),
-                            disabledBackgroundColor: AppColors.colorTextField,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            )
+                                              },
+                                              leading: Container(
+                                                width: Get.width*0.15,
+                                                height: Get.width*0.15,
+                                                decoration: BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(15),
+                                                    image: DecorationImage(image: CachedNetworkImageProvider(currentVideo.thumbnails.high??''),fit: BoxFit.cover)
+                                                ),
+                                              ),
+                                              title: Text(currentVideo.title,style: AppConstants.textStyleMedium.copyWith(color: currenIdList.contains(currentVideo.id) || selectedVideosID.contains(currentVideo.id) ?AppColors.primaryColor:Colors.white),maxLines: 1,overflow: TextOverflow.ellipsis,),
+                                              subtitle: Text(currentVideo.channelTitle,style: AppConstants.textStyleSmall.copyWith(color: Colors.grey),),
+                                              trailing: Icon(Icons.check,color:currenIdList.contains(currentVideo.id) || selectedVideosID.contains(currentVideo.id) ? AppColors.primaryColor:Colors.transparent,)
+                                            );
+                                          }),
+                                    );
+                                  })
                           ),
-                          child: Text('Add',style: AppConstants.textStyleTitleSmall,)),
-                      const SizedBox(height: 25,),
-                    ],
-                  ),
-            ),
+                          const SizedBox(height: 15,),
+                          ElevatedButton(
+                              onPressed:selectedVideosID.isNotEmpty? () {
+                                 Get.find<LibraryController>().addNewToPlaylist(playlist.name, selectedVideosID);
+                                 Get.back();
+                              }:null,
+                              style: ElevatedButton.styleFrom(
+                                minimumSize:const Size(double.maxFinite, 50),
+                                disabledBackgroundColor: AppColors.colorTextField,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                )
+                              ),
+                              child: Text('Add',style: AppConstants.textStyleTitleSmall,)),
+                          const SizedBox(height: 25,),
+                        ],
+                      ),
+                ),
 
+              );
+            }
           );
         });
   }

@@ -9,15 +9,18 @@ import '../views/global_ui/dialog.dart';
 class LibraryController extends GetxController{
 
 
-  addNewToPlaylist(String playlistKey,List<YoutubeVideo> video){
-    // Box<Playlist> libraryBox = Hive.box(AppConstants.boxLibrary);
-    // if(libraryBox.containsKey(playlistKey)){
-    //     Playlist playlist = libraryBox.get(playlistKey)!;
-    //     playlist.videoList.addAll(video);
-    //     libraryBox.put(playlistKey, playlist);
-    // }else{
-    //   libraryBox.put(playlistKey, Playlist(name: playlistKey, videoList: video));
-    // }
+  addNewToPlaylist(String playlistKey,List<String> selectVideoId){
+    Box<Playlist> playlistBox = Hive.box<Playlist>(AppConstants.boxLibrary);
+    Playlist newPlaylist = playlistBox.get(playlistKey)!;
+    newPlaylist.videoList.addAll(selectVideoId);
+    playlistBox.put(playlistKey, newPlaylist);
+  }
+
+  deleteVideoFromPlaylist(String playlistKey,String videoId){
+    Box<Playlist> playlistBox = Hive.box<Playlist>(AppConstants.boxLibrary);
+    Playlist newPlaylist = playlistBox.get(playlistKey)!;
+    newPlaylist.videoList.remove(videoId);
+    playlistBox.put(playlistKey, newPlaylist);
   }
 
   createNewPlaylist(Playlist playlist) async{

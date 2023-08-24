@@ -122,7 +122,7 @@ class LibraryPage extends StatelessWidget {
 
 
   Widget eachPlaylist(Playlist playlist) {
-    YoutubeVideo firstVideo =  Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(playlist.videoList.first)!;
+    YoutubeVideo? firstVideo =playlist.videoList.isEmpty?null:Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).get(playlist.videoList.first);
     return GestureDetector(
       onTap: (){
         Get.to(PlaylistScreen(playlist: playlist));
@@ -140,10 +140,8 @@ class LibraryPage extends StatelessWidget {
                 child: Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15),
-                      image:playlist.videoList.isNotEmpty?
-                      DecorationImage(
-                          image:CachedNetworkImageProvider(firstVideo.thumbnails.high),
-                          fit: BoxFit.cover):
+                      image:firstVideo!=null?
+                      DecorationImage(image:CachedNetworkImageProvider(firstVideo.thumbnails.high), fit: BoxFit.cover):
                       const DecorationImage(image: AssetImage('assets/images/place_holder.png'))
                   ),
                 ),

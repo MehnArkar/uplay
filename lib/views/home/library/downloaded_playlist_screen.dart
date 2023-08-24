@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:uplayer/models/playlist.dart';
 import 'package:uplayer/models/youtube_video.dart';
 import 'package:uplayer/utils/constants/app_constant.dart';
 import 'package:uplayer/views/global_ui/super_scaffold.dart';
@@ -202,7 +203,23 @@ class DownloadedPlaylistScreen extends StatelessWidget {
           ListView.builder(
               padding: EdgeInsets.zero,
               itemCount: box.values.length,
-              itemBuilder: (context, index) => VideoWidget(video:box.getAt(index)!)
+              itemBuilder: (context, index) {
+                YoutubeVideo video = box.getAt(index)!;
+                return Dismissible(
+                  key: Key(video.id),
+                  onDismissed: (_) {
+                    Hive.box<YoutubeVideo>(AppConstants.boxDownloadedVideo).delete(video.id);
+                    Box<Playlist> playlistBox = Hive.box<Playlist>(AppConstants.boxLibrary);
+                    playlistBox.values.forEach((playlist) {
+                      if(playlist.videoList.contains(video.id)){
+                        playlist.videoList.remove(video.id);
+                        playlistBox.put(playlist.name, playlist);
+                      }
+                    });
+                  },
+                  child: VideoWidget(video: video)
+              );
+              }
           ):
           Center(
             child: Column(
